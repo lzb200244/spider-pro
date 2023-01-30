@@ -1,0 +1,20 @@
+#pytharm
+#todo 忽悠文件夹
+.idea/
+.DS_Store
+db.sqlite3
+__pycache__/
+*.py[cod]
+*$py.class
+
+#Django stuff
+backstage/local_settings.py
+*.sqlite3
+media/
+apps/spider/temp_views.py
+#database migrations
+*/migrations/*.py
+!*/migrations/__init__.py
+
+#venv
+venv/
