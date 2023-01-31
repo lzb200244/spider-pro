@@ -18,7 +18,6 @@
 import SpiderConfig from '@/components/spider/SpiderConfig.vue'
 import SpiderDesc from '@/components/spider/SpiderDesc.vue'
 import { ref } from 'vue'
-import { spiderResponseOptionAble } from '@/module/views/spider'
 
 export default {
   components: {

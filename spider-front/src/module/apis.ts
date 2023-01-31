@@ -6,7 +6,6 @@
  ex:
  """
  */
-
 import { RawAxiosRequestConfig } from 'axios'
 
 export const enum responseCode {

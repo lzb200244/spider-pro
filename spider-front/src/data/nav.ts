@@ -1,6 +1,5 @@
 // 导航栏
 
-import { Nav } from '@/module/data'
 const navData: Nav = [
   {
     path: 'home',

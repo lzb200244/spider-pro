@@ -33,19 +33,20 @@
 <script lang="ts">
 import ImgLoad from '@/components/layout/ImgLoad.vue'
 import { computed } from 'vue'
-import { domainResponseAble } from '@/module/views/spider'
 
 export default {
   name: 'SpiderDesc',
-  setup(props: { response: { imgList: string[]; domain: domainResponseAble } }) {
+
+  setup(props: { response: spiderResponseAble }) {
     const imgList = computed((): string[] => {
       /**
        * 图片
        */
+
       return props.response.imgList ? props.response.imgList : ['']
     })
 
-    const domain = computed<domainResponseAble >(() => {
+    const domain = computed<domainResponseAble>(() => {
       /**
        * 域名消息
        *

@@ -1,18 +1,18 @@
 /**
- # @Time : 2023/1/20 22:14
+ # @Time : 2023/1/31 17:16
  # @Site : https://www.codeminer.cn
  """
- file-name:data
+ file-name:type.d.ts
  ex:
  """
  */
-export type NavItem={
+type NavItem={
   path: string,
   text: string,
   icon: string,
   class?: string,
 }
 
-export interface Nav {
+interface Nav {
   [index: number]: NavItem
 }

@@ -29,7 +29,6 @@
 import download from 'downloadjs/download'
 import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import { message } from 'ant-design-vue'
-import { checkBoxAble, pagesConfAble, inputType } from '@/module/imgLoad'
 
 export default {
   name: 'ImgLoad',
@@ -39,6 +38,7 @@ export default {
       checkedList: [],
       checkAll: false
     })
+    // eslint-disable-next-line no-undef
     const pagesConf = reactive<pagesConfAble>({
       currentPage: 1,
       pageSize: 8
@@ -48,16 +48,25 @@ export default {
       checkBox.checksList = props.imgList
     })
     const onCheckAllChange = () => {
+      /**
+       * 全选
+       * */
       indeterminate.value = checkBox.checkAll
     }
     const select = (event: Event): void => {
+      /**
+       * 选择下载图片
+       */
       const dom = (event.target as inputType)
       dom.checked
         ? checkBox.checkedList.push((dom.value as string))
         : checkBox.checkedList = checkBox.checkedList.filter(_ => _ !== dom.value)
     }
     const downloadImg = (): void | never => {
-      // 下载事件
+      /**
+       * 下载事件
+       */
+
       if (checkBox.checkedList.length !== 0) {
         checkBox.checkedList.forEach(item => {
           try {
@@ -70,6 +79,9 @@ export default {
       }
     }
     const Images = computed(() => {
+      /**
+       * 图片
+       */
       return checkBox.checksList.slice((pagesConf.currentPage - 1) * 6, pagesConf.currentPage * 6)
     })
 

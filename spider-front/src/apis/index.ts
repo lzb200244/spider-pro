@@ -11,7 +11,7 @@
 import { getToken } from '@/utils/cookies'
 import { message } from 'ant-design-vue'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
-import { ResponseAble, responseCode, RequestConfig } from '@/module/apis'
+import { RequestConfig, ResponseAble, responseCode } from '@/module/apis'
 
 class Request<T> {
   private _instance: AxiosInstance // axios实例

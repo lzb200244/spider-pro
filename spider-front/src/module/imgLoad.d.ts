@@ -1,13 +1,14 @@
 /**
  * ImageLoad
  */
-export interface checkBoxAble {
+interface checkBoxAble {
   checksList: string[],
   checkedList: string[],
   checkAll: boolean
 }
-export interface pagesConfAble {
+interface pagesConfAble {
   currentPage: number,
   pageSize: number
 }
-export type inputType = HTMLInputElement
+
+type inputType = HTMLInputElement

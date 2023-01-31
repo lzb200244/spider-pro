@@ -1,7 +1,5 @@
 import instance from './index'
-
-import { AccountFormReadonly, ResponseAble, spiderDomainAble } from '@/module/apis'
-
+import { ResponseAble, spiderDomainAble, AccountFormReadonly } from '@/module/apis'
 const register = (form: AccountFormReadonly) => {
   return instance.post<ResponseAble>({
     url: 'account/register',

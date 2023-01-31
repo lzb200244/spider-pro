@@ -57,6 +57,7 @@ export default defineComponent({
         title: "request.xpath('/html/p/text()')"
       }
     ]
+
     const sendCustom = () => {
       console.log(monacoEditor.getValue())
     }
