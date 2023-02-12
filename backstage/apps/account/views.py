@@ -3,9 +3,9 @@ from rest_framework.mixins import CreateModelMixin
 from rest_framework.views import APIView
 from apps.account.models import UserInfo
 from apps.account.serializer import AccountSerializers
-from utils.auth.jwtauthentication import JWTAuthentication
 from utils.factory.jwt_auth import create_token
 from utils.response.response import APIResponse
+from extensions.auth.jwtauthentication import JWTAuthentication
 
 
 class LoginAPIView(APIView):

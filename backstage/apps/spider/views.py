@@ -5,7 +5,6 @@
 ex:spider-views
 """
 from rest_framework.views import APIView
-
 from utils.factory.spider.domain import Domain
 from utils.response.response import APIResponse
 

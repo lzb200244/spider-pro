@@ -8,10 +8,11 @@ export function getToken(key: Key = 'JWT_TOKEN'): string {
 
 // 设置token
 
-export function setToken(key: Key, token: string):any {
+export function setToken(key: Key, token: string): any {
   // 设置两个星期过期
   return Cookies.set(key, token, { expires: 60 * 24 * 24 * 14 })
 }
+
 /*
 type setToken= { (key: Key, token: string): void }
 export const setToken:setToken = function (key, token) {
@@ -19,7 +20,11 @@ export const setToken:setToken = function (key, token) {
 }
  */
 
-// 删除token
+/**
+ * 删除token
+ * @param key
+ */
 export function removeToken(key: Key = 'JWT_TOKEN') {
+  console.log(Cookies.delete(key))
   return Cookies.delete(key)
 }

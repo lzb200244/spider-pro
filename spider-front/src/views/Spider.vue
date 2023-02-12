@@ -27,10 +27,21 @@ export default {
   name: 'Home',
   setup() {
     const status = ref<boolean>(false)
+    /**
+     * 响应
+     * */
     const response = ref<spiderResponseOptionAble>()
+
+    /**
+     *调度任务时
+     */
     const spider = (): void => {
       status.value = true
     }
+    /**
+     *
+     * 爬取状态
+     */
     const spiderStatus = (data: spiderResponseOptionAble, status = true): void => {
       response.value = data
     }

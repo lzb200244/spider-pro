@@ -3,11 +3,12 @@
 # @Site : https://www.codeminer.cn
 import jwt
 from rest_framework.authentication import BaseAuthentication
-from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed, ParseError
 
 from apps.account.models import UserInfo
-from backstage.local_settings import JWT_CONF
+
+from django.conf import settings
+
 from utils.factory.patternFc import Pattern, HeaderPattern
 
 """
@@ -34,8 +35,8 @@ class JWTAuthentication(BaseAuthentication):
             raise errors
 
         if jwt_token is None: return None, None
-        salt = JWT_CONF.get('salt', settings.SECRET_KEY)  # 盐
-        typ = JWT_CONF.get('typ', 'HS256')  #
+        salt = settings.JWT_CONF.get('salt', settings.SECRET_KEY)  # 盐
+        typ = settings.JWT_CONF.get('typ', 'HS256')  #
 
         try:
             payload = jwt.decode(

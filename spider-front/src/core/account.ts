@@ -25,15 +25,17 @@ export default () => {
     password: ''
   })
   const RegisterFormState = reactive<AccountFormReadonly>({
-    username: '',
-    password: '',
+    ...LoginFormState,
     email: '',
     rePassword: ''
   })
   const activeKey = ref<string>('login')
+  /**
+   * 确认密码校验
+   */
   const rePasswordRules = {
     type: 'string',
-    asyncValidator: (rule: string, value: string) => {
+    asyncValidator: (rule: string, value: string): Promise<string | null> => {
       // 确认密码校验
       return new Promise((resolve, reject) => {
         if (RegisterFormState.password !== value) {
@@ -44,7 +46,10 @@ export default () => {
       })
     }
   }
-  const Login = (forms: AccountFormReadonly) => {
+  /**
+   * 登录
+   */
+  const Login = (forms: AccountFormReadonly): void => {
     /*
       关闭滑动校验功能
       if (!this.$refs.child.isSuccess()) {
@@ -59,7 +64,10 @@ export default () => {
       router.push('home')
     })
   }
-  const Register = (forms: AccountFormReadonly) => {
+  /**
+   * 注册
+   */
+  const Register = (forms: AccountFormReadonly): void => {
     register(forms).then(res => {
       message.info('注册成功')
       activeKey.value = 'login'

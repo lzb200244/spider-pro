@@ -76,21 +76,26 @@ export default {
   name: 'SpiderConfig',
   emits: ['spider', 'spiderStatus'],
   setup(props :any, { emit }:any) {
+    /**
+     * 配置项
+     */
     const formConfig = reactive<spiderDomainAble>({
       url: 'https://unsplash.com/',
       modules: [],
       customOptions: []
     })
     const loading = ref<boolean>(false)
+    /**
+     * 选项计算
+     */
     const options = computed(() => {
-      // 选项计算属性
       const items = ['图片', '文章', '表格']
       return items.map(item => ({ value: item }))
     })
+    /**
+     * 添加选项
+     */
     const addOption = ():void => {
-      /**
-       * 添加选项
-       */
       formConfig.customOptions.push({
         title: '',
         value: '',

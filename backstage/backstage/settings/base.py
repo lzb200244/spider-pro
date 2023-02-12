@@ -119,11 +119,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-"""默认修该setting配置"""
 
-try:
-    from .local_settings import *
-
-except ImportError as e:
-    print(e)
-    pass

@@ -5,7 +5,9 @@
         <Header/>
       </a-layout-header>
       <a-layout-content :style="{background:'#fff'}">
-        <router-view></router-view>
+
+          <router-view></router-view>
+
       </a-layout-content>
       <a-layout-footer :style="{background:'#fff'}">
         <Footer/>
@@ -15,13 +17,14 @@
 
 </template>
 
-<script >
+<script>
 import Footer from '@/components/layout/Footer.vue'
 import Header from '@/components/layout/Header.vue'
 
 export default {
   components: {
-    Header, Footer
+    Header,
+    Footer
   },
   setup() {
 
