@@ -3,7 +3,7 @@ import App from './App.vue'
 import 'ant-design-vue/dist/antd.css'
 import router from '@/router/promission'
 import 'ant-design-vue/lib/date-picker/style/css'
-import { key, store } from '@/store'
+import { store } from '@/store'
 import '../index.css'
 import {
   Form,
@@ -47,5 +47,5 @@ ANTDS.forEach(item => {
 })
 app.use(router)
 
-app.use(store, key) // store对象
+app.use(store) // store对象
 app.mount('#app')

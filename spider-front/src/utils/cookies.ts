@@ -2,14 +2,21 @@ import Cookies from 'vue-cookie'
 
 type Key = string
 
+/**
+ * 获取cookies
+ * @param key
+ */
 export function getToken(key: Key = 'JWT_TOKEN'): string {
   return Cookies.get(key)
 }
 
 // 设置token
-
+/**
+ * 存储cookies过期时间
+ * @param key
+ * @param token cookie
+ */
 export function setToken(key: Key, token: string): any {
-  // 设置两个星期过期
   return Cookies.set(key, token, { expires: 60 * 24 * 24 * 14 })
 }
 
@@ -25,6 +32,6 @@ export const setToken:setToken = function (key, token) {
  * @param key
  */
 export function removeToken(key: Key = 'JWT_TOKEN') {
-  console.log(Cookies.delete(key))
+  // console.log(Cookies.delete(key))
   return Cookies.delete(key)
 }

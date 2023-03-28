@@ -48,7 +48,7 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import nav from '@/data/nav'
 import {
   UserOutlined,
@@ -60,45 +60,23 @@ import { useRouter } from 'vue-router'
 import { removeToken } from '@/utils/cookies'
 import { account } from '@/apis/request'
 import { toRefs, ref, onMounted } from 'vue'
-import { key } from '@/store'
+const navCurrent = ref(['home'])
+const store = useStore()// account
+const router = useRouter()
+onMounted(() => {
+  store.dispatch('userAsync')
+})
+// 当前导航位置
 
-export default {
-  name: 'Header',
-  components: {
-    UserOutlined,
-    ShareAltOutlined,
-    LogoutOutlined
-  },
+const { user } = toRefs(store.state.account)
 
-  setup() {
-    onMounted(() => {
-      account().then(res => {
-        // 保存用户对象
-        // console.log(res.data)
-
-        store.commit('saveUser', res.data)
-      })
-    })
-    const store = useStore(key)// account
-    const router = useRouter()
-    const { user } = toRefs(store.state)
-    const navCurrent = ref(['home'])
-
-    const logout = () => {
-      // 删除store信息
-      store.commit('deleteUser')
-      //  清除本地cookie
-      removeToken()
-      // 跳转到登录页面
-      router.push('account')
-    }
-    return {
-      nav,
-      logout,
-      user,
-      navCurrent
-    }
-  }
+const logout = () => {
+  // 删除store信息
+  store.commit('deleteUser')
+  //  清除本地cookie
+  removeToken()
+  // 跳转到登录页面
+  router.push('account')
 }
 </script>
 

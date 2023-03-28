@@ -1,3 +1,6 @@
+/**
+ * 校验
+ */
 const pattern = {
   password: /^(?=.*[A-Za-z])(?=.*\d)[^]{6,16}$/,
   username: /^[a-zA-Z0-9]{6,12}$/

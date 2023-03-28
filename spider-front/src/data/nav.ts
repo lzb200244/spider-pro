@@ -12,18 +12,7 @@ const navData: Nav = [
     text: '爬虫',
     icon: '<home-two-tone></home-two-tone>'
   },
-  {
-    path: 'chart',
-    text: '大 屏',
-    icon: '<home-two-tone></home-two-tone>'
 
-  },
-  {
-    path: 'layout',
-    text: '大 厅',
-    icon: '<home-two-tone></home-two-tone>'
-
-  },
   {
     path: 'test',
     text: '测 试',

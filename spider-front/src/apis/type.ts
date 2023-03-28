@@ -8,10 +8,11 @@
  */
 import { RawAxiosRequestConfig } from 'axios'
 
+/**
+ * 响应code
+ */
 export const enum responseCode {
-  /**
-   * 响应code
-   */
+
   Ok = 200,
   Created,
   Accepted,
@@ -22,34 +23,25 @@ export const enum responseCode {
   Error = Ok + 300
 }
 
+/**
+ * 请求响应
+ */
 export interface ResponseAble {
-  /**
-   * 请求响应
-   */
+
   code: number,
   msg: string | string[],
   data?: any,
 
 }
 
-export interface AccountFormAble {
-  /**
-   * 登录与注册接口
-   */
-  username: string,
-  password: string,
-  email?: string,
-  rePassword?: string
-}
-
+/**
+ * 爬虫配置
+ */
 export interface spiderDomainAble {
-  /**
-   * 爬虫配置
-   */
+
   url: string,
   modules: string[],
   customOptions: any[]
 }
 
-export type AccountFormReadonly = Readonly<AccountFormAble>;
 export type RequestConfig = RawAxiosRequestConfig

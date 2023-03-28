@@ -30,50 +30,32 @@
   </a-card>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+
 import ImgLoad from '@/components/layout/ImgLoad.vue'
 import { computed } from 'vue'
+import { spiderResponseAble, domainResponseAble } from '@/core/spider/type'
+// eslint-disable-next-line vue/no-setup-props-destructure
+const { response } = defineProps<{
+  response: spiderResponseAble;
 
-export default {
-  name: 'SpiderDesc',
+}>()
 
-  setup(props: { response: spiderResponseAble }) {
-    const imgList = computed((): string[] => {
-      /**
-       * 图片
-       */
+const imgList = computed((): string[] => {
+  return response.imgList ? response.imgList : ['']
+})
 
-      return props.response.imgList ? props.response.imgList : ['']
-    })
+const domain = computed<domainResponseAble>({
+  get: () => {
+    /**
+     * 域名消息
+     *
+     */
 
-    const domain = computed<domainResponseAble>(() => {
-      /**
-       * 域名消息
-       *
-       */
-      // Object.keys().length===0
-      return props.response?.domain ? props.response.domain : ({} as domainResponseAble)
-    })
-
-    return {
-      imgList,
-      domain
-    }
-  },
-  props: {
-    status: {
-      type: Boolean,
-      default: false
-    },
-    response: {
-      type: Object
-    }
-  },
-  components: {
-    ImgLoad
+    return response?.domain ? response.domain : ({} as domainResponseAble)
   }
+})
 
-}
 </script>
 
 <style scoped>

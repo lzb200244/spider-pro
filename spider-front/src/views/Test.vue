@@ -44,9 +44,10 @@
 
 </template>
 <script lang="ts">
-
+import { useStore } from 'vuex'
 import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue'
 import { defineComponent } from 'vue'
+
 // import * as XLSX from 'xlsx'
 
 const columns = [
@@ -126,6 +127,8 @@ export default defineComponent({
     DownOutlined
   },
   setup() {
+    const store = useStore()
+    store.dispatch('userAsync')
     const a = 1
     return {
       data,

@@ -8,19 +8,16 @@
  */
 import { useStore } from 'vuex'
 import { message } from 'ant-design-vue'
-
-import { key } from '@/store'
-import { register, login } from '@/apis/request'
+import { register, login } from '@/apis/account/index'
 import { setToken } from '@/utils/cookies'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { AccountFormReadonly } from '@/module/apis'
-// import cav from '@/assets/js/canvas'
+import { AccountFormReadonly } from './type'
 
 export default () => {
   const router = useRouter()
-  const store = useStore(key)
-  const LoginFormState = reactive<AccountFormReadonly>({
+  const store = useStore()
+  const LoginFormState = reactive<Pick<AccountFormReadonly, 'password' | 'username'>>({
     username: '',
     password: ''
   })
@@ -46,18 +43,14 @@ export default () => {
       })
     }
   }
+
   /**
    * 登录
+   * @param forms
    */
   const Login = (forms: AccountFormReadonly): void => {
-    /*
-      关闭滑动校验功能
-      if (!this.$refs.child.isSuccess()) {
-      return message.info('请完成验证!')
-    }
-     */
     login(forms).then(res => {
-      store.commit('saveUser', res)
+      store.commit('setUser', res)
       // this.saveUser(res)
       setToken('JWT_TOKEN', res.data.token)
       message.success('登入成功')
@@ -74,7 +67,6 @@ export default () => {
     })
   }
   return {
-
     LoginFormState,
     RegisterFormState,
     activeKey,

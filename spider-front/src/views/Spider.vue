@@ -1,5 +1,5 @@
 <template>
-  <a-layout-content class="">
+  <a-layout-content >
     <a-row>
       <a-col :md="24" :xs="24" :lg="12" class="p-sm">
         <a-card title="输入配置项">
@@ -13,46 +13,31 @@
   </a-layout-content>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 
 import SpiderConfig from '@/components/spider/SpiderConfig.vue'
 import SpiderDesc from '@/components/spider/SpiderDesc.vue'
 import { ref } from 'vue'
+import { spiderResponseOptionAble } from '@/core/spider/type'
 
-export default {
-  components: {
-    SpiderConfig,
-    SpiderDesc
-  },
-  name: 'Home',
-  setup() {
-    const status = ref<boolean>(false)
-    /**
-     * 响应
-     * */
-    const response = ref<spiderResponseOptionAble>()
+const status = ref<boolean>(false)
+/**
+ * 响应
+ * */
+const response = ref<spiderResponseOptionAble>()
 
-    /**
-     *调度任务时
-     */
-    const spider = (): void => {
-      status.value = true
-    }
-    /**
-     *
-     * 爬取状态
-     */
-    const spiderStatus = (data: spiderResponseOptionAble, status = true): void => {
-      response.value = data
-    }
-    return {
-      status,
-      response,
-      spider,
-      spiderStatus
-    }
-  }
-
+/**
+ *调度任务时
+ */
+const startSpider = (): void => {
+  status.value = true
+}
+/**
+ *
+ * 爬取状态
+ */
+const spiderStatus = (data: spiderResponseOptionAble, status = true): void => {
+  response.value = data
 }
 </script>
 

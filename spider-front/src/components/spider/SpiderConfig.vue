@@ -63,83 +63,15 @@
   </a-card>
 </template>
 
-<script lang="ts">
-import { message } from 'ant-design-vue'
-import { spiderDomain } from '@/apis/request'
-
+<script lang="ts" setup>
 import Edit from '@/components/layout/Edit.vue'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import { computed, reactive, ref } from 'vue'
-import { spiderDomainAble } from '@/module/apis'
+import useConf from '@/core/spider/spiderConf'
+const {
+  formConfig, loading, options, addOption, removeOption, SendConfig
+} =
+useConf()
 
-export default {
-  name: 'SpiderConfig',
-  emits: ['spider', 'spiderStatus'],
-  setup(props :any, { emit }:any) {
-    /**
-     * 配置项
-     */
-    const formConfig = reactive<spiderDomainAble>({
-      url: 'https://unsplash.com/',
-      modules: [],
-      customOptions: []
-    })
-    const loading = ref<boolean>(false)
-    /**
-     * 选项计算
-     */
-    const options = computed(() => {
-      const items = ['图片', '文章', '表格']
-      return items.map(item => ({ value: item }))
-    })
-    /**
-     * 添加选项
-     */
-    const addOption = ():void => {
-      formConfig.customOptions.push({
-        title: '',
-        value: '',
-        id: Date.now()
-      })
-    }
-    const SendConfig = (form:spiderDomainAble) => {
-      /**
-       *  开始爬取
-       */
-      emit('spider')
-      loading.value = true
-      Object.assign(form, { modules: Object.keys(form.modules) })
-      spiderDomain(form).then(res => {
-        loading.value = false
-        emit('spiderStatus', res.data, true)
-        message.success(res.msg)
-      })
-    }
-    const removeOption = (item:any) => {
-      /**
-       * 溢出选项
-       */
-      const index = formConfig.customOptions.indexOf(item)
-      if (index !== -1) {
-        formConfig.customOptions.splice(index, 1)
-      }
-    }
-    return {
-      loading,
-      formConfig,
-      options,
-      addOption,
-      SendConfig,
-      removeOption
-    }
-  },
-  components: {
-    PlusOutlined,
-    MinusCircleOutlined,
-    Edit
-  }
-
-}
 </script>
 
 <style scoped>

@@ -107,9 +107,10 @@
 </template>
 
 <script lang='ts' setup>
-import Account from '@/core/account'
+import useAccount from '@/core/account/account'
 import Rules from '@/utils/rules/account'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
+
 const {
   LoginFormState,
   RegisterFormState,
@@ -117,7 +118,7 @@ const {
   rePasswordRules,
   Register,
   Login
-} = Account()
+} = useAccount()
 </script>
 
 <style scoped>
