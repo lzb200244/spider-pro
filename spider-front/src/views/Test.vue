@@ -129,7 +129,7 @@ export default defineComponent({
   setup() {
     const store = useStore()
     store.dispatch('userAsync')
-    const a = 1
+
     return {
       data,
       columns,

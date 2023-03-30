@@ -67,10 +67,66 @@
 import Edit from '@/components/layout/Edit.vue'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import useConf from '@/core/spider/spiderConf'
-const {
-  formConfig, loading, options, addOption, removeOption, SendConfig
-} =
-useConf()
+import { computed, defineEmits, reactive, ref } from 'vue'
+import { spiderDomainAble } from '@/core/spider/type'
+import { spiderDomain } from '@/apis/spider'
+import { message } from 'ant-design-vue'
+
+const emits = defineEmits(['startSpider', 'spiderSuccess'])
+/**
+ * 配置项
+ */
+const formConfig = reactive<spiderDomainAble>({
+
+  url: 'https://unsplash.com/',
+  modules: [],
+  customOptions: []
+})
+/**
+ * 是否在加载状态
+ * */
+const loading = ref(false)
+/**
+ * 选项
+ */
+const options = computed(() => {
+  const items = ['图片', '文章', '表格']
+  return items.map(item => ({ value: item }))
+})
+/**
+ * 添加选项
+ */
+const addOption = (): void => {
+  formConfig.customOptions.push({
+    title: '',
+    value: '',
+    id: Date.now()
+  })
+}
+const SendConfig = (form: spiderDomainAble) => {
+  /**
+   *  开始爬取
+   */
+
+  emits('startSpider')
+
+  loading.value = true
+  Object.assign(form, { modules: Object.keys(form.modules) })
+  spiderDomain(form).then(res => {
+    loading.value = false
+    emits('spiderSuccess', res.data, true)
+    message.success(res.msg)
+  })
+}
+const removeOption = (item: any) => {
+  /**
+   * 溢出选项
+   */
+  const index = formConfig.customOptions.indexOf(item)
+  if (index !== -1) {
+    formConfig.customOptions.splice(index, 1)
+  }
+}
 
 </script>
 

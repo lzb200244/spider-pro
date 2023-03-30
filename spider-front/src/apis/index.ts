@@ -121,7 +121,7 @@ class Request<T> {
 }
 
 const conf: RequestConfig = {
-  baseURL: 'http://127.0.0.1:8888/v1/api',
+  baseURL: 'http://127.0.0.1:8000/v1/api',
   // baseURL: 'v1/api',
   timeout: 15000,
   headers: {

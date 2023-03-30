@@ -1,9 +1,9 @@
 <template>
-  <a-layout-content >
+  <a-layout-content>
     <a-row>
       <a-col :md="24" :xs="24" :lg="12" class="p-sm">
         <a-card title="输入配置项">
-          <spider-config @spiderStatus='spiderStatus' @spider='spider'/>
+          <spider-config @spiderSuccess='spiderSuccess' @startSpider='startSpider'/>
         </a-card>
       </a-col>
       <a-col :md="24" :xs="24" :lg="12" class="p-sm">
@@ -27,16 +27,16 @@ const status = ref<boolean>(false)
 const response = ref<spiderResponseOptionAble>()
 
 /**
- *调度任务时
+ *开始调度任务时
  */
 const startSpider = (): void => {
   status.value = true
 }
 /**
  *
- * 爬取状态
+ * 爬取完成
  */
-const spiderStatus = (data: spiderResponseOptionAble, status = true): void => {
+const spiderSuccess = (data: spiderResponseOptionAble): void => {
   response.value = data
 }
 </script>
