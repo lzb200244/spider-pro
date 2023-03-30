@@ -5,7 +5,9 @@ from django.conf.urls.static import static
 """
 全局url分发 
 """
+
 urlpatterns = [
+
     re_path('^(?P<version>[v1|v2]+)/api/', include(
         [
             path('account/', include('apps.account.urls')),

@@ -19,11 +19,14 @@ except ImportError as e:
 sys.path.append(str(BASE_DIR))
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 REST_FRAMEWORK = {
+
     # "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.AcceptHeaderVersioning",
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
     "DEFAULT_VERSION": "v1",
     "ALLOWED_VERSIONS": ["v1", "v2"],
     "VERSION_PARAM": "version",
+    # swagger注解
+    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     #     配置认证类(todo 全局配置一般不全局配置
     # "DEFAULT_AUTHENTICATION_CLASSES": ["utils.auth.MyAuth", ]
     # 限流控制
@@ -41,6 +44,16 @@ REST_FRAMEWORK = {
 # JWT配置
 JWT_CONF = {
     "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
+}
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
 }
 
 # 跨域配置

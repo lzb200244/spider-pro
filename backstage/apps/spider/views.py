@@ -4,7 +4,12 @@
 """
 ex:spider-views
 """
+from socket import gethostbyname, gaierror
+from urllib.parse import urlparse
+
 from rest_framework.views import APIView
+
+from utils.factory.patternFc import pf
 from utils.factory.spider.domain import Domain
 from utils.response.response import APIResponse
 
@@ -19,20 +24,28 @@ class SpiderView(APIView):
 
     def post(self, request, *args, **kwargs):
         if request.version == 'v1':
-            print(request.data)
+
             url = request.data.get('url')
             modules = request.data.get('modules')  # 多选对象
-            print(modules)
-            print(type(modules))
+
             customs = request.data.get('customOptions')  # 是否自定义类
             update = request.data.get('update')  # 是否是实时数据非缓存
+            # 先做一次dns解析
+            try:
+                host = gethostbyname(pf['domain'].match(urlparse(url).netloc).group('domain'))
+                # print(type())
+            except gaierror as e:
+
+                return APIResponse(data='', msg='dns解析失败', code=1200, status=400)
             domain = Domain(url)
-            domain.get_whois_info()  # 获取域名
+
+            domain.get_whois_info(host)  # 获取域名
+
             domain.dispatch(modules)  # 分发
             if domain.success():
                 return APIResponse(data=domain.data, msg='爬取成功')
 
-            return APIResponse(data=domain.errors, msg='爬取失败')
+            return APIResponse(data=domain.errors, msg='爬取失败', status=400)
 
 
 """

@@ -7,6 +7,8 @@ ex:
 import random
 
 import time
+from typing import Optional, NoReturn
+
 from requests import exceptions
 
 import requests
@@ -14,6 +16,8 @@ from bs4 import BeautifulSoup
 import whois
 from whois.parser import PywhoisError
 
+from type.spider.main import DomainMap, ImgList
+from utils.conn.redis.redis_pool import RedisPooL
 from utils.spider.scheduler.spider_scheduler import CrawlContext
 
 
@@ -24,6 +28,7 @@ class MyError(Exception):
 
 def retry(re_count=1, except_types: tuple = (MyError,)):
     """
+    请求重试
     :param re_count: 重复次数
     :param except_types: 异常元组
     :return:
@@ -55,10 +60,19 @@ class Domain(object):
     def __init__(self, url):
         self.errors = {}
         self.url = url
+        self.host = ''
         self.content = ''
-        self.__data_dict = {}
+        self.__data_dict: dict = {
+            # 域名信息
+            'domain': DomainMap,
+            'imgList': ImgList
+        }
 
-    def get_whois_info(self):
+    def get_whois_info(self, host) -> NoReturn:
+        import json
+        """
+        获取域名详细
+        """
         try:
             """
               <a-descriptions-item label="域名地址">{{ domain.domain_name }}</a-descriptions-item>
@@ -68,10 +82,21 @@ class Domain(object):
               <a-descriptions-item label="注册邮箱">{{ domain.emails }}</a-descriptions-item>
               <a-descriptions-item label="户主">{{ domain.name }}</a-descriptions-item>
             """
+            # 费时操作
+            conn = RedisPooL().get_con
+            hostname = f'domain_{host}'
+            if conn.exists(hostname):
+                self.__data_dict['domain'] = json.loads(conn.get(hostname))
+                return
             info = whois.whois(self.url)  # Info返回了所有的whois查询信息，可根据需要选择想要提取的查询方法
-            
+
             require_items = ['domain_name', 'registrar', 'creation_date', 'expiration_date', 'emails', 'name']
-            self.__data_dict['domain'] = {item: info.get(item) for item in require_items}
+            domain = {item: str(info.get(item)) for item in require_items}
+
+            conn.set(hostname, json.dumps(domain, ensure_ascii=False))
+
+            self.__data_dict['domain']: DomainMap = domain
+
 
         except PywhoisError as e:
             self.add_error({'domain': '域名解析错误'})
@@ -79,27 +104,29 @@ class Domain(object):
 
             self.add_error({'domain': error})
 
+    # 请求参数
     @retry(re_count=5, except_types=(exceptions.ConnectionError,))
     def spider(self):
+        # 决策
         man = CrawlContext(self.url, {1: 1})
 
         tree, soup, content = man.do_strategy()
         # print(tree, soup)
         self.content = content
 
-    def get_all_img(self):
+    def get_all_img(self) -> NoReturn:
         soup = BeautifulSoup(self.content, 'html.parser')
         self.__data_dict["imgList"] = [img.get('src') for img in soup.find_all('img')]
 
-    def add_error(self, error):
+    def add_error(self, error) -> NoReturn:
         self.errors.update(error)
 
-    def success(self):
+    def success(self) -> bool:
         """成功"""
         return self.errors.__len__() == 0
 
     @property
-    def data(self, ):
+    def data(self, ) -> dict:
         return self.__data_dict
 
     def get_all_table(self):
@@ -109,9 +136,13 @@ class Domain(object):
     def get_all_text(self):
         # 文本关键提取
         self.__data_dict['text'] = ''
-        pass
 
-    def dispatch(self, opt_list):
+    def dispatch(self, opt_list: list) -> NoReturn:
+        """
+        分发任务
+        :param opt_list:
+        :return:
+        """
         self.spider()
         # print(self.content)
         opt_map = {
@@ -132,7 +163,7 @@ class Domain(object):
 
 class SpiderUtils:
     @staticmethod
-    def headers():
+    def headers() -> dict:
         user_agent = [
             "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
             "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",

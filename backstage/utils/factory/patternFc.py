@@ -30,6 +30,12 @@ class PhonePattern(PatternFactory):
         return re.compile(r"^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$")
 
 
+class DomainPatter(PatternFactory):
+    @property
+    def compile(self):
+        return re.compile(r'(?P<domain>[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?)')
+
+
 class Pattern:
     __pat_dic = {}
     count = 1
@@ -80,7 +86,7 @@ pf.add('phone', PhonePattern)
 pf.add('email', EmailPattern)
 pf.add('header', HeaderPattern)
 pf.add('pwd', PWDPattern)
-
+pf.add('domain', DomainPatter)
 
 if __name__ == '__main__':
     pass

@@ -1,5 +1,7 @@
 import hashlib
 
+import jwt
+from django.conf import settings
 from django.conf.global_settings import SECRET_KEY
 from django.db import models
 
@@ -50,6 +52,31 @@ class UserInfo(models.Model):
         md5.update(password.encode('utf8'))
         md5.update(SECRET_KEY.encode('utf8'))
         return md5.hexdigest()
+
+    def equal_pwd(self, password):
+        pass
+
+    def get_token(self) -> str:
+        """
+        生成jwt返回给用户
+        :return:
+        """
+        SALT = settings.SECRET_KEY  # 岩
+
+        headers = {
+            'typ': settings.JWT_CONF.get('typ', 'jwt'),  # 头
+            'alg': settings.JWT_CONF.get('alg', 'HS256'),  # 算法
+        }
+        payload = {
+            'id': self.pk,
+            'name': self.username,
+            'exp': settings.JWT_CONF.get('exp', 60)
+        }
+
+        token = jwt.encode(payload=payload, key=SALT, algorithm=headers.get('alg'), headers=headers).encode(
+            "utf-8").decode(
+            'utf-8')
+        return token
 
     def __str__(self):
         return self.username

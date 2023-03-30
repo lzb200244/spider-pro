@@ -4,3 +4,7 @@
 """
 ex:
 """
+# import whois
+
+# info = whois.whois("https://unsplash.com/")
+
