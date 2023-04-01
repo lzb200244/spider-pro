@@ -5,7 +5,9 @@
 file-name:main
 ex:
 """
-from typing import List, NewType, Optional, Mapping, Dict, NoReturn
+from typing import (
+    List, NewType, Optional, Mapping, Dict, NoReturn, TypedDict, Any
+)
 
 # Img = NewType("Img", List[str])
 # 爬爬取图片列表
@@ -14,8 +16,10 @@ ImgList = List[Optional[str]]
 DomainMap = Mapping[str, str]
 
 
-
-
-
-
-
+class Params(TypedDict):
+    url: str
+    ip: str
+    opt: List[str]
+    static: bool
+    mode: bool
+    task: Dict[str, Any]

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# @Time : 2023/1/6 17:30
+# @Time : 2023/4/1 18:29
 # @Site : https://www.codeminer.cn 
 """
-file-name:spider
-ex:默认配置
+file-name:__init__
+ex:
 """

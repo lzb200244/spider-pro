@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Time : 2023/1/6 17:33
-# @Site : https://www.codeminer.cn 
+# @Site : https://www.codeminer.cn
 """
 file-name:request_util
 ex:
@@ -8,7 +8,7 @@ ex:
 import random
 import time
 
-from utils.spider.utils.error import NothingDoError
+from core.spider.errors.basics import NothingDoError
 
 
 class SpiderUtils:
@@ -59,7 +59,7 @@ class SpiderUtils:
         return {'User-Agent': random.choice(user_agent)}
 
 
-class Decorate:
+class RequestDecorate:
     @staticmethod
     def retry(re_count=1, except_types: tuple = (NothingDoError,)):
         """
@@ -81,7 +81,12 @@ class Decorate:
                         continue
                     except Exception as e:
                         print(e)
-                        return
+                        raise e
+
+                        # return
+                else:
+                    # 请求重试超5次就判断爬取失败
+                    raise Exception("爬取失败")
 
             return inner
 

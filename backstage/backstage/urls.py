@@ -14,7 +14,8 @@ urlpatterns = [
             path('spider/', include('apps.spider.urls', ))
         ],
     )),
-    # re_path('^(?P<version>[v1|v2]+)/api/spider/', include('spider.urls', ))
+    # re_path('^(?P<version>[v1|v2]+)/api/account/', include('apps.account.urls', )),
+    # re_path('^(?P<version>[v1|v2]+)/api/spider/', include('apps.spider.urls', )),
 ]
 
 if settings.DEBUG:

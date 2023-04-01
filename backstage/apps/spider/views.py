@@ -4,14 +4,13 @@
 """
 ex:spider-views
 """
-from socket import gethostbyname, gaierror
-from urllib.parse import urlparse
 
 from rest_framework.views import APIView
-
-from utils.factory.patternFc import pf
-from utils.factory.spider.domain import Domain
 from utils.response.response import APIResponse
+from core.spider.dispatcher.basics import Dispatcher
+from core.spider.errors.basics import Error
+from core.spider.resolver.basics import DNSResolver
+from core.spider.utils.domain import Domain
 
 
 class SpiderView(APIView):
@@ -24,42 +23,26 @@ class SpiderView(APIView):
 
     def post(self, request, *args, **kwargs):
         if request.version == 'v1':
-
-            url = request.data.get('url')
-            modules = request.data.get('modules')  # 多选对象
-
-            customs = request.data.get('customOptions')  # 是否自定义类
-            update = request.data.get('update')  # 是否是实时数据非缓存
-            # 先做一次dns解析
             try:
-                host = gethostbyname(pf['domain'].match(urlparse(url).netloc).group('domain'))
-                # print(type())
-            except gaierror as e:
-
-                return APIResponse(data='', msg='dns解析失败', code=1200, status=400)
-            domain = Domain(url)
-
-            domain.get_whois_info(host)  # 获取域名
-
-            domain.dispatch(modules)  # 分发
-            if domain.success():
-                return APIResponse(data=domain.data, msg='爬取成功')
-
-            return APIResponse(data=domain.errors, msg='爬取失败', status=400)
-
-
-"""
-
-{
-    "url": "https://unsplash.com/",
-    "option": [
-        "图片"
-    ],
-    "customOptions": [
-        {
-            "title": "111",
-            "value": "是"
-        }
-    ]
-}
-"""
+                # 域名解析
+                data = request.data
+                host = DNSResolver(data.get('url')).resolver()
+                dis = Dispatcher(
+                    url=data.get('url'), ip=host, opt=data.get('modules'), mode=False, static=False,
+                    # task={'email': '262@qq'}
+                )
+                # 开始解析
+                # 分发任务
+                dis.extract.dispatch(dis.params.get('opt'))
+                res = dis.extract.data
+                # 获取域名信息
+                domain = Domain(dis.params)
+                res.update(domain.get_domain())
+                # print(res)
+            except Error as e:
+                print(e.value)
+                return APIResponse(data='', msg=e.value)
+            except Exception as e:
+                print(e)
+                return APIResponse(data='', msg='Error')
+            return APIResponse(data=res)
