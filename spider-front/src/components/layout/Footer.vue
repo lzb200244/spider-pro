@@ -1,5 +1,5 @@
 <template>
-  <a-row justify="center ">
+  <a-row justify="center">
     <a-col class="mx">
       <a-tooltip placement="topLeft">
         <template #title>
@@ -51,25 +51,12 @@
   </a-row>
 </template>
 
-<script>
+<script setup lang="ts">
 import {
   GithubOutlined, QqOutlined,
   BugOutlined, UserOutlined, ShareAltOutlined
 } from '@ant-design/icons-vue'
 
-export default {
-  name: 'Footer',
-  components: {
-    GithubOutlined,
-    QqOutlined,
-    ShareAltOutlined,
-    BugOutlined,
-    UserOutlined
-  },
-  setup() {
-    return {}
-  }
-}
 </script>
 
 <style scoped>

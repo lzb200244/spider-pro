@@ -1,5 +1,5 @@
 import instance from '@/apis/index'
-import { ResponseAble, spiderDomainAble } from '@/apis/type'
+import { ResponseAble } from '@/apis/type'
 import { AccountFormReadonly } from '@/core/account/type'
 
 /**
@@ -30,7 +30,24 @@ const account = () => {
     { url: 'account/' }
   )
 }
+const getTasks = () => {
+  /**
+   * 获取用户任务列表
+   */
+  return instance.get<ResponseAble>({
+    url: 'account/tasks'
 
+  })
+}
+const delTask = (id: string) => {
+  return instance.delete<ResponseAble>({
+    url: 'account/tasks',
+    data: {
+      id
+    }
+
+  })
+}
 export {
-  account, register, login
+  account, delTask, register, login, getTasks
 }

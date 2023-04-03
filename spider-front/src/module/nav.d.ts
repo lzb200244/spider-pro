@@ -9,7 +9,7 @@
 type NavItem = {
   path: string,
   text: string,
-  icon: string,
+  icon?: string,
   class?: string,
 }
 

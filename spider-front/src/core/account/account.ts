@@ -11,7 +11,7 @@ import { message } from 'ant-design-vue'
 import { register, login } from '@/apis/account/index'
 import { setToken } from '@/utils/cookies'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { AccountFormReadonly } from './type'
 
 export default () => {
@@ -54,7 +54,8 @@ export default () => {
       // this.saveUser(res)
       setToken('JWT_TOKEN', res.data.token)
       message.success('登入成功')
-      router.push('home')
+      const next = router.currentRoute.value.query.next as string ?? 'spider'
+      router.push(next)
     })
   }
   /**

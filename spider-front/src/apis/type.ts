@@ -34,14 +34,21 @@ export interface ResponseAble {
 
 }
 
+export type Tasks = 'id' | 'name' | 'description' | 'run_time'
+
 /**
  * 爬虫配置
  */
 export interface spiderDomainAble {
 
   url: string,
-  modules: string[],
-  customOptions: any[]
+  opt: string[],
+  mode: boolean,
+  static: boolean,
+  email?: string,
+  name?: string,
+  time?: string
+  customOptions?: any[]
 }
 
 export type RequestConfig = RawAxiosRequestConfig

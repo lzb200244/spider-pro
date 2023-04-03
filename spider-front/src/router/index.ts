@@ -17,11 +17,22 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/tasks',
+    component: () => import('@/views/Tasks.vue'),
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
     path: '/spider',
     component: () => import('@/views/Spider.vue'),
     meta: {
       requireAuth: false
     }
+  },
+  {
+    path: '',
+    redirect: '/spider'
   }
 ]
 // 1.返回一个 router 实列，为函数，里面有配置项（对象） history

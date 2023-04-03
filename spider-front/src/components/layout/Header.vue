@@ -58,9 +58,10 @@ import {
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { removeToken } from '@/utils/cookies'
-import { account } from '@/apis/request'
+import { account } from '@/apis/account/index'
 import { toRefs, ref, onMounted } from 'vue'
-const navCurrent = ref(['home'])
+
+const navCurrent = ref(['spider'])
 const store = useStore()// account
 const router = useRouter()
 onMounted(() => {
@@ -71,8 +72,10 @@ onMounted(() => {
 const { user } = toRefs(store.state.account)
 
 const logout = () => {
-  // 删除store信息
+  // 删除用户数据
   store.commit('deleteUser')
+  // 删除用户任务
+  store.commit('setTasks', [])
   //  清除本地cookie
   removeToken()
   // 跳转到登录页面

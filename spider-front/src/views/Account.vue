@@ -1,5 +1,5 @@
 <template>
-  <div id="account" ref="account" class="flex-center account bg " style="height: 100vh;">
+  <div id="account" ref="account" class="flex-center account bg ">
     <a-tabs v-model:activeKey="activeKey" centered class="rounded-md p-sm">
       <a-tab-pane key="login" tab="登录">
         <a-form

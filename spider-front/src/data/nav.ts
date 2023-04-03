@@ -2,15 +2,14 @@
 
 const navData: Nav = [
   {
-    path: 'home',
-    text: '首 页',
-    icon: '<home-two-tone></home-two-tone>'
+    path: 'spider',
+    text: '爬虫'
+
     // 自定义属性
   },
   {
-    path: 'spider',
-    text: '爬虫',
-    icon: '<home-two-tone></home-two-tone>'
+    path: 'tasks',
+    text: '定时任务'
   },
 
   {

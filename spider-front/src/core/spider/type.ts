@@ -7,9 +7,16 @@ export interface spiderResponseAble {
 }
 
 export type spiderResponseOptionAble = Partial<spiderResponseAble>
+
 export interface spiderDomainAble {
 
   url: string,
-  modules: string[],
-  customOptions: any[]
+  opt: string[],
+  type:string,
+  mode: boolean,
+  static: boolean,
+  email?: string,
+  name?: string,
+  time?: string,
+  customOptions?: any[]
 }

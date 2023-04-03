@@ -2,7 +2,7 @@
   <a-layout-content>
     <a-row>
       <a-col :md="24" :xs="24" :lg="12" class="p-sm">
-        <a-card title="输入配置项">
+        <a-card    style="min-height: 400px" title="输入配置项">
           <spider-config @spiderSuccess='spiderSuccess' @startSpider='startSpider'/>
         </a-card>
       </a-col>

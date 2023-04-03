@@ -1,12 +1,12 @@
 <template>
   <!-- -->
 
-  <a-card v-if="!status" title="爬取结果">
+  <a-card v-if="!status" title="爬取结果" style="min-height: 400px">
 
     <a-empty/>
   </a-card>
 
-  <a-card v-else title="爬取结果" style="min-height: 300px">
+  <a-card v-else title="爬取结果" style="min-height: 400px">
 
     <template v-if="!response?.domain">
       <!--空对象-->
@@ -29,7 +29,7 @@
         </a-descriptions>
       </a-card>
       <a-card title="图片" :bordered="false">
-        <img-load v-if="response?.imgList.length!==0" :imgList="response?.imgList"/>
+        <img-load v-if="response?.imgList?.length!==0" :imgList="response?.imgList"/>
       </a-card>
     </template>
   </a-card>

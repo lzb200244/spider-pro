@@ -12,6 +12,7 @@ import { getToken } from '@/utils/cookies'
 import { message } from 'ant-design-vue'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
 import { RequestConfig, ResponseAble, responseCode } from './type'
+import { useRouter } from 'vue-router'
 
 class Request<T> {
   private _instance: AxiosInstance // axios实例
@@ -23,7 +24,8 @@ class Request<T> {
        * 请求
        */
       // 在发送请求之前做些什么
-      const token: string = getToken()
+      const token: string = getToken() ?? undefined
+
       if (token) {
         config.headers['jwt-token'] = token
       }
@@ -52,8 +54,10 @@ class Request<T> {
       }
       switch (status) {
         case responseCode.Forbidden:
-          message.warning('密码或用户名错误')
+        {
+          message.warning(error.response.data.msg)
           return
+        }
         case responseCode.RETRY_HTTP_CODES:
           message.warning('操作频率过快,已被限流,稍后在试试')
           window.location.href = 'https://www.baidu.com'
@@ -123,7 +127,7 @@ class Request<T> {
 const conf: RequestConfig = {
   baseURL: 'http://127.0.0.1:8000/v1/api',
   // baseURL: 'v1/api',
-  timeout: 15000,
+  timeout: 40000,
   headers: {
     'X-Custom-Header': `code-miner-${Request.getRules()}` // 反请求
     // 'jwt-token': get_token()
