@@ -7,11 +7,12 @@ module.exports = defineConfig({
 
   devServer: {
     proxy: {
-      '/v1/api': {
-        target: 'http://127.0.0.1:8888/v1/api',
-        // pathRewrite: { '^/api': '' },
-        changeOrigin: true
-      }
+      // '/api': 'http://localhost:3000'
+
+      // '/api': {
+      //   target: 'http://127.0.0.1:800/v1/api',
+      //   pathRewrite: { '^/api': '' }
+      // }
     }
   },
   configureWebpack: {

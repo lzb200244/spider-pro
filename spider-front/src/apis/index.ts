@@ -24,7 +24,7 @@ class Request<T> {
        * 请求
        */
       // 在发送请求之前做些什么
-      const token: string = getToken() ?? undefined
+      const token: string = getToken()
 
       if (token) {
         config.headers['jwt-token'] = token
@@ -69,7 +69,7 @@ class Request<T> {
 
       // 对响应错误做点什么
       return Promise.reject(
-        new Error(<string>errorsData.msg)
+        errorsData
       )
     })
   }
@@ -126,7 +126,7 @@ class Request<T> {
 
 const conf: RequestConfig = {
   baseURL: 'http://127.0.0.1:8000/v1/api',
-  // baseURL: 'v1/api',
+  // baseURL: 'api',
   timeout: 40000,
   headers: {
     'X-Custom-Header': `code-miner-${Request.getRules()}` // 反请求

@@ -3,7 +3,7 @@
 import { MutationTree, ActionTree } from 'vuex'
 import { account, getTasks } from '@/apis/account/index'
 import { Tasks } from '@/apis/type'
-
+import { State, Mutations, Actions } from '@/store/modules/account/type'
 // 定义 state 的类型
 
 // 初始化 state

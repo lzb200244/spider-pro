@@ -48,7 +48,7 @@ import { useStore } from 'vuex'
 import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue'
 import { defineComponent } from 'vue'
 
-// import * as XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 
 const columns = [
   {

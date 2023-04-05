@@ -6,7 +6,8 @@ const routes: Array<RouteRecordRaw> = [
     path: '/account',
     component: () => import('@/views/Account.vue'),
     meta: {
-      requireAuth: false
+      requireAuth: false,
+      title: '账户'
     }
   },
   {
@@ -20,14 +21,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tasks',
     component: () => import('@/views/Tasks.vue'),
     meta: {
-      requireAuth: true
+      requireAuth: true,
+      title: '任务'
     }
   },
   {
     path: '/spider',
     component: () => import('@/views/Spider.vue'),
     meta: {
-      requireAuth: false
+      requireAuth: false,
+      title: '爬虫'
     }
   },
   {

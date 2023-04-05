@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <a-menu :dashed="true" v-model:selectedKeys="navCurrent" mode="horizontal">
       <a-menu-item v-for="(item) in nav" :key="item.path" :style="item.style">
         <router-link :class="item.class" :to="item.path">{{ item.text }}</router-link>
@@ -15,28 +16,22 @@
         <router-link to="person">
           <a-dropdown>
             <a class="ant-dropdown-link" @click.prevent>
-              <a-avatar style="background-color: #87d068">
+              <a-avatar shape="square" style="background-color:#1890ff">
                 <template #icon>
                   <UserOutlined/>
                 </template>
               </a-avatar>
             </a>
             <template #overlay>
-              <a-menu style="margin-top: 20px;">
+              <a-menu style="margin-top: 10px;">
                 <a-menu-item>
                   <a-button type="text" @click="logout">
                     登出
-                    <template #icon>
-                      <logout-outlined/>
-                    </template>
                   </a-button>
                 </a-menu-item>
                 <a-menu-item>
                   <a-button type="text">
                     分享
-                    <template #icon>
-                      <share-alt-outlined/>
-                    </template>
                   </a-button>
                 </a-menu-item>
               </a-menu>
@@ -64,9 +59,9 @@ import { toRefs, ref, onMounted } from 'vue'
 const navCurrent = ref(['spider'])
 const store = useStore()// account
 const router = useRouter()
-onMounted(() => {
-  store.dispatch('userAsync')
-})
+
+store.dispatch('userAsync')
+
 // 当前导航位置
 
 const { user } = toRefs(store.state.account)
@@ -84,5 +79,7 @@ const logout = () => {
 </script>
 
 <style scoped>
-
+/*.ant-menu-horizontal > .ant-menu-item-selected a{*/
+/*  color: #87d068;*/
+/*}*/
 </style>

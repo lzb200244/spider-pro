@@ -30,11 +30,19 @@ import {
   Pagination,
   Image,
   Switch,
-  Select, Dropdown, Checkbox, Table, Popconfirm
+  Modal,
+  Tag,
+  AutoComplete,
+  Select, Dropdown, Checkbox, Table, Popconfirm, Skeleton, Radio
 } from 'ant-design-vue'
 
 const ANTDS = [
   Form,
+  Radio,
+  Tag,
+  Skeleton,
+  AutoComplete,
+  Modal,
   Tabs,
   DatePicker,
   Popconfirm,

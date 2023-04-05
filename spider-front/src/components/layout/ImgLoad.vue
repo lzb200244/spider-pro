@@ -1,23 +1,24 @@
 <template>
 
-  <div style="display: flex;justify-content: right">
-    <a-checkbox v-model:checked="checkAll"
-                :indeterminate="indeterminate"
-                @change="onCheckAllChange">
-      all
-    </a-checkbox>
+  <div>
+
+<!--    <a-checkbox v-model:checked="checkAll"-->
+<!--                :indeterminate="indeterminate"-->
+<!--                @change="onCheckAllChange">-->
+<!--      all-->
+<!--    </a-checkbox>-->
     <a-button @click="downloadImg">下载</a-button>
   </div>
   <div class="content m-md">
     <template v-for="(img) in Images" :key="img">
       <a-image
-        width="60px"
-        height="60px"
+        width="75px"
+        height="75px"
         :src="img"/>
-      <a-checkbox :value="img" @change="select" ref="img" style="margin:  10px;"/>
+      <a-checkbox :value="img" @change="select" ref="img" style="margin: 10px;"/>
     </template>
   </div>
-  <div id="components-pagination-demo-mini" class="m-xl">
+  <div class="m-xl" style="float: right">
     <a-pagination size="small" v-model:current="currentPage" :total="checksList.length"/>
   </div>
 
@@ -27,7 +28,7 @@
  * 下载图片
  */
 import download from 'downloadjs/download'
-import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue'
+import { computed, onMounted, reactive, ref, toRefs } from 'vue'
 import { message } from 'ant-design-vue'
 
 export default {
@@ -43,6 +44,7 @@ export default {
       currentPage: 1,
       pageSize: 8
     })
+
     const indeterminate = ref(true)
     onMounted(() => {
       checkBox.checksList = props.imgList
@@ -52,6 +54,12 @@ export default {
        * 全选
        * */
       indeterminate.value = checkBox.checkAll
+      // 权全选
+      if (indeterminate.value) {
+        checkBox.checkedList = checkBox.checksList
+      } else {
+        checkBox.checkedList = []
+      }
     }
     const select = (event: Event): void => {
       /**
@@ -84,13 +92,14 @@ export default {
        */
       return checkBox.checksList.slice((pagesConf.currentPage - 1) * 6, pagesConf.currentPage * 6)
     })
-
     // watch(checkedList, (newValue, oldValue) => {
     //   checkedList.value.length === checksList.value.length ? checkAll.value = true : ''
     // })
+
     return {
       indeterminate,
       Images,
+
       ...toRefs(checkBox),
       ...toRefs(pagesConf),
       downloadImg,

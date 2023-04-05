@@ -1,1 +1,0 @@
-![](../../doc/img/dir_intro.png)
