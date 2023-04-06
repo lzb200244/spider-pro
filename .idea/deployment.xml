@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="local" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="root@43.138.105.186:22">
+      <paths name="local">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/opt/nginx1-12/html" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

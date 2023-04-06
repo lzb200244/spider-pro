@@ -8,7 +8,6 @@ from django.urls import path
 
 from apps.spider.views import SpiderView
 
-
 urlpatterns = [
     path('domain', SpiderView.as_view()),  # 域名爬取
 

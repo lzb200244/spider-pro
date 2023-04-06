@@ -22,4 +22,8 @@ class Params(TypedDict):
     opt: List[str]
     static: bool
     mode: bool
-    task: Dict[str, Any]
+    customOptions: Dict[str, Any]
+
+    email: str
+    name: str
+    time: Any
