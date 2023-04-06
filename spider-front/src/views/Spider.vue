@@ -72,7 +72,6 @@ const spiderFailed = (): void => {
 <style scoped>
 .example {
   text-align: center;
-
   border-radius: 4px;
   margin: 150px 0;
 }

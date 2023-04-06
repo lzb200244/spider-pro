@@ -53,8 +53,7 @@ class Request<T> {
         return
       }
       switch (status) {
-        case responseCode.Forbidden:
-        {
+        case responseCode.Forbidden: {
           message.warning(error.response.data.msg)
           return
         }
@@ -125,7 +124,8 @@ class Request<T> {
 }
 
 const conf: RequestConfig = {
-  baseURL: 'http://127.0.0.1:8000/v1/api',
+  // baseURL: 'http://localhost:8000/v1/api',
+  baseURL: 'http://192.168.10.129/v1/api',
   // baseURL: 'api',
   timeout: 40000,
   headers: {

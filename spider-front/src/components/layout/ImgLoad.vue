@@ -14,6 +14,7 @@
       <a-image
         width="75px"
         height="75px"
+        crossOrigin="anonymous"
         :src="img"/>
       <a-checkbox :value="img" @change="select" ref="img" style="margin: 10px;"/>
     </template>

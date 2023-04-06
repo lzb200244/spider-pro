@@ -130,6 +130,7 @@ import { computed, defineEmits, reactive, ref, watch } from 'vue'
 import { SpiderConf } from '@/core/spider/type'
 import { spiderDomain } from '@/apis/spider'
 import { message } from 'ant-design-vue'
+
 const emailOption = ref<{ value: string }[]>([])
 /**
  * 自动输入框
@@ -195,7 +196,7 @@ const addOption = (): void => {
     id: Date.now()
   })
 }
-const handleSearch = (val: string):void => {
+const handleSearch = (val: string): void => {
   let res: { value: string }[]
   if (!val || val.indexOf('@') >= 0) {
     res = []
@@ -220,7 +221,6 @@ const SendConfig = (form: SpiderConf) => {
    */
 
   emits('startSpider')
-
   loading.value = true
   const status = true
   spiderDomain(formConfig).then(res => {
