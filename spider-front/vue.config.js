@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { defineConfig } = require('@vue/cli-service')
+const CompressionPlugin = require('compression-webpack-plugin')
 
-module.exports = defineConfig({
+module.exports = {
   publicPath: './',
   transpileDependencies: true,
 
@@ -15,14 +14,16 @@ module.exports = defineConfig({
       // }
     }
   },
-  configureWebpack: {
-    resolve: {
-      extensions: ['.js', '.vue', '.json', '.ts'], // 后缀名省略配置
-      alias: {
-        components: '@/components'
-      }
+  productionSourceMap: false, // 关闭生产环境的source map
+  configureWebpack: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+      // 使用 CompressionPlugin 压缩文件
+      config.plugins.push(new CompressionPlugin({
+        test: /\.js$|\.css$|\.html$/,
+        threshold: 8192,
+        deleteOriginalAssets: false
+      }))
     }
-
   },
 
   css: {
@@ -38,5 +39,4 @@ module.exports = defineConfig({
       }
     }
   }
-
-})
+}

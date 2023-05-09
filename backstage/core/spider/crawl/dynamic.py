@@ -6,12 +6,8 @@ file-name:local
 ex:
 """
 from typing import Dict
+from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
-
-from selenium import webdriver
-
-# 添加无头参数
-
 from core.spider.crawl.basics import BaseCrawl
 from core.spider.utils.request_util import RequestDecorate
 
@@ -24,13 +20,41 @@ class DynamicLocalSpiderCrawl(BaseCrawl):
         super().__init__(params)
 
     def open(self):
-        driver_options = Options()
-        driver_options.headless = True
+        # # 不加载图片
+        # options.add_experimental_option("prefs", {"profile.managed_default_content_settings.plugins": 2})
+        # # # 不加载视频
+        # options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
+        # # 不加载css和js
+        # options.add_experimental_option("prefs", {"profile.managed_default_content_settings.stylesheets": 2,
+        #                                           "profile.managed_default_content_settings.javascript": 2})
+        # # # 无头参数
+        # options.add_argument('--no-sandbox')
+        # options.add_argument('--headless')
+        # options.add_argument('--disable-gpu')  # 不加载图片
+        # options.add_argument('--no-sandbox')
+        # options.add_argument('--disable-dev-shm-usage')
+        # 启动浏览器
+        options = Options()
 
-        self.driver = webdriver.Firefox(options=driver_options)
+        # 禁止加载图片
+        options.set_preference("permissions.default.image", 2)
+        # 禁止自动播放视频
+        options.set_preference("media.autoplay.default", 0)
+        # 读取缓存
+        options.set_preference("browser.cache.disk.enable", True)
+        # 读取缓存
+        options.set_preference("browser.cache.memory.enable", True)
+        # 禁止加载js
+        options.set_preference("javascript.enabled", False)
+        # 无头
+        options.add_argument("--headless")
+        options.set_preference("permissions.default.stylesheet", 2)
+
+        self.driver = Firefox(options=options)
         super(DynamicLocalSpiderCrawl, self).open()
 
     def close(self):
+        print('动态完成了')
         self.driver.close()
         self.driver.quit()
 
@@ -43,7 +67,7 @@ class DynamicLocalSpiderCrawl(BaseCrawl):
         :return:
         """
         self.driver.get(self.params.get('url'))
-        self.driver.implicitly_wait(5)
+
         self.response_data = self.driver.page_source.encode('utf-8')
 
         return self.spider_response(content=self.response_data)

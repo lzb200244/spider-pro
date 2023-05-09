@@ -6,9 +6,10 @@ ex:
 """
 from django.urls import path
 
-from apps.spider.views import SpiderView
+from apps.spider.views import SpiderView, Test
 
 urlpatterns = [
     path('domain', SpiderView.as_view()),  # 域名爬取
+    path('test', Test.as_view()),  # 域名爬取
 
 ]

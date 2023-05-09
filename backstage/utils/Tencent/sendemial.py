@@ -26,14 +26,12 @@ class SendEmail:
         except:
             # 记录日志
             pass
-
-        #     raise Error("发送邮箱失败")
-        # if send_status != 1:
-        #     raise Error("发送邮箱失败")
+            raise Error("发送邮箱失败")
+        if send_status != 1:
+            raise Error("发送邮箱失败")
 
 
 EMAIL = SendEmail()
-
 
 if __name__ == '__main__':
     print("邮箱")

@@ -24,18 +24,15 @@ class Dispatcher:
     def __init__(
             self,
             url: str,
-            ip: str,
             opt: List[str],
             static: bool = False,
             mode: bool = False,
             task: Dict[str, Any] = None,
-            customOptions: Dict[str, Any] = None,
             **kwargs,
     ):
         print("异步来了")
         """
         :param url: 爬取的地址
-        :param ip: 解析的ip地址
         :param opt: 爬取的内容 [图片,文本,图标]
         :param mode: 是否需要实时的
         :param task: 是否存在任务
@@ -43,21 +40,20 @@ class Dispatcher:
         :param static: 是否是前后端分离
         """
         # 打包
-        self.params = self._pack_params(url, ip, opt, static, mode, task, customOptions)
+        self.params = self._pack_params(url, opt, static, mode, task)
         self.scheduler = LocalCrawlScheduler(self.params)
         # 返回解析的文本
         self.extract = ContentExtract(self._make_decision(), context={'url': url})
 
     def _pack_params(
-            self, url: str, ip: str, opt: List[str], static: bool, mode: bool = False,
-            task: Dict[str, Any] = None, customOptions: Dict[str, Any] = None, ) -> Dict[str, Any]:
+            self, url: str, opt: List[str], static: bool, mode: bool = False,
+            task: Dict[str, Any] = None) -> Dict[str, Any]:
         """参数打包"""
         base = {
             'url': url,
-            'ip': ip,
             'opt': opt,
             'mode': mode,
-            'static': static, 'customOptions': customOptions
+            'static': static,
         }
 
         if task:

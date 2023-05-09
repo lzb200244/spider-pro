@@ -33,9 +33,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # celery周期任务
+    "django_celery_beat",
     'apps.spider.apps.SpiderConfig',
     'apps.account.apps.AccountConfig',
+    # 跨域
     'corsheaders',
+    # drf
     'rest_framework',
 
 ]

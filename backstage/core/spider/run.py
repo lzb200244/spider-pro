@@ -15,14 +15,6 @@ from collections import OrderedDict
 
 
 def run(params: Params, **kwargs):
-    # logginger = logging.getLogger('spider')
-    # logginger.info('爬取错误了', extra={'url': 'www.baidu.com'})
-    host = DNSResolver(params.get('url')).resolver()
-    params.update(
-        {
-            'ip': host
-        }
-    )
     dis = Dispatcher(
         **params, **kwargs
     )

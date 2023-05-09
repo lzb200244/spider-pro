@@ -4,76 +4,81 @@
 """
 ex:spider-views
 """
-
-from datetime import datetime
 from django_redis import get_redis_connection
-from core.spider.conf import REDIS_EXPIRED
+from rest_framework.views import APIView
 
-from core.spider.register.delayRegister import DelayRegister
+from core.spider.register.basics import RegisterUserTasks
 from core.spider.run import run
-from extensions.auth.jwtauthentication import JWTAuthentication
-from mycelery.delay_task.spider.main import customer_spider
-from mycelery.delay_task.spider.main import base_spider
+from extensions.permissions.IsAuthenticated import CustomIsAuthenticated
+from type.spider.main import Params
 from utils.response.response import APIResponse
 from core.spider.errors.basics import Error
-from rest_framework.generics import GenericAPIView
 
 name = 'spider'
 conn = get_redis_connection(name)
 
 
-class SpiderView(GenericAPIView):
+class SpiderView(APIView):
     """
     1:默认先去redis查找最近30天是否有该信息的记录,当redis块过期时将存储带数据库,如果没有就访问数据库,存储该key
     2:数据库有就返回没有就
     3:开始爬取任务
     """
-    authentication_classes = [JWTAuthentication, ]
+    permission_classes = [CustomIsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        if request.version == 'v1':
-            try:
-                data = request.data
-                # 执行函数
-                if data.get("type") == "spider":
-                    # 执行爬虫
-                    res = run(data)
-                    # 注册一个7天定时任务
-                    week = REDIS_EXPIRED['week']
-                    utc_ctime = datetime.utcfromtimestamp((datetime.now() + week).timestamp())
-                    result = base_spider.apply_async(args=(data,), eta=utc_ctime)
-                    msg = '爬取成功'
-                elif data.get("type") == "task":
-                    time = datetime.strptime(data.get('time'), '%Y-%m-%d %H:%M:%S')
-                    utc_ctime = datetime.utcfromtimestamp(time.timestamp())
-                    # 注册定时任务
-                    # 使用apply_async并设定时间
-                    # 实例化任务器
-                    register = DelayRegister(request=request)
 
-                    # 注册任务
-                    register.register('user_customer', customer_spider.apply_async)
-                    # 执行任务
-                    result = register.run('user_customer', args=(data,), eta=utc_ctime)
+        try:
+            import copy
+            data: Params = copy.deepcopy(request.data)
+            # 对data进行参数过滤
+            # 执行函数
 
-                    # 记录任务
-                    register.record(task_id=result.id, **data)
-                    res = {
-                        'id': result.id,
-                        'description': data.get('description'),
-                        'name': data.get('name'),
-                        'run_time': time.timestamp()
+            if data.get("type") == "spider":
+                # 执行爬虫
+                res = run(data)
+                data.update({
+                    'mode': True, 'static': True,
+                    'task': {
+                        "name": data['url'],
+                        "desc": "站内定时任务",
+                        "rules": {
+                            "type": "weekly",
+                            "timer": {
+                                "time": "00:07",
+                                "num": 0
+                            }
+                        }
                     }
-                    msg = '添加成功'
-                else:
-                    raise Error(msg="参数错误")
-            except Error as e:
-                raise Error(**e.__dict__)
-            except ValueError:
-                # return Error(msg='时间参数错误', status=400)
-                return Error(msg='时间参数错误', )
-            except Exception as e:
-                print(e)
-                # return Error(msg='爬取错误了!!!', status=400)
-                return Error(msg='爬取错误了!!!')
-            return APIResponse(data=res, msg=msg, )
+                })
+                register = RegisterUserTasks(data, request.user)
+                # 创建任务
+                register.create()
+                msg = '爬取成功'
+
+                #     针对存在异常
+            elif data.get("type") == "task":
+                register = RegisterUserTasks(data, request.user)
+                # 创建任务
+                res = register.create()
+                msg = '注册成功'
+            else:
+                raise Error(msg="参数错误")
+        except Error as e:
+            # raise e
+            return APIResponse(**e.__dict__)
+        except ValueError as e:
+            raise e
+            return APIResponse(msg='输入类型错误', status=400)
+            # raise Error(msg='时间参数错误', )
+        except Exception as e:
+            raise e
+            return APIResponse(msg='爬取错误!!', status=400)
+        return APIResponse(data=res, msg=msg, )
+
+
+class Test(APIView):
+    authentication_classes = []
+
+    def get(self, request, *args, **kwargs):
+        return APIResponse('注册成功')

@@ -13,7 +13,8 @@ try:
     from backstage.settings.base import *
 except ImportError as e:
     print(e)
-# DRF配置
+DEBUG = False
+# ################################################DRF配置
 
 REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
@@ -34,30 +35,39 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES':
         ('rest_framework.renderers.JSONRenderer',)
 }
-# JWT配置
+# ################################################JWT配置
 JWT_CONF = {
     "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1)
 }
-DEBUG = False
-# 跨域配置
+# ################################################跨域配置
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_CREDENTIALS = True  # 允许所有的请求头
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_HEADERS = ('*',)
-# redis配置
+CORS_ORIGIN_WHITELIST = (
+    'http://www.spider-pro.cn',
+    'http://spider-pro.cn',
+
+    'https://spider-pro.cn',
+    'https://www.spider-pro.cn',
+)
+# ################################################chrome配置
+DRIVER_PATH = './chromedriver'
+# ################################################redis配置
 
 CATCH_LIST = ['default', 'spider', 'account']
 REDIS_CONN = {
-    "host": "localhost",
-    # "port": 7000,
-    "password": 'root'
+    "host": "127.0.0.1",
+    "port": 16380,
+    "password": 'lzb200244',
+
 }
 
 
 def redis_conf(index):
     return {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_CONN.get('host')}:6379/{index}",  # 安装redis的主机的 IP 和 端口
+        "LOCATION": f"redis://{REDIS_CONN.get('host')}:{REDIS_CONN.get('port')}/{index}",  # 安装redis的主机的 IP 和 端口
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
@@ -74,17 +84,18 @@ CACHES = {
     item: redis_conf(index) for index, item in enumerate(CATCH_LIST)
 
 }
+# ################################################mysql数据库
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'spider_pro',
         'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'PASSWORD': 'lzb200244',
+        'HOST': '127.0.0.1',
+        'PORT': '13307',
     }
 }
-# todo 日志配置
+# ################################################日志配置
 LOG_ROOT = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOG_ROOT):
     os.mkdir(LOG_ROOT)

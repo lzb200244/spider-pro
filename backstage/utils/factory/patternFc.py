@@ -4,12 +4,13 @@
 """
 ex:
 """
-"""正则工厂"""
+"""正则抽象工厂"""
 import re
 from abc import ABCMeta, abstractmethod
 
 
-class PatternFactory(object, metaclass=ABCMeta):
+class PatternFactory(metaclass=ABCMeta):
+
     @abstractmethod
     def compile(self): pass
 
@@ -91,6 +92,7 @@ pf.add('email', EmailPattern)
 pf.add('header', HeaderPattern)
 pf.add('pwd', PWDPattern)
 pf.add('domain', DomainPatter)
-print(pf)
+
+# print(pf)
 if __name__ == '__main__':
     pass

@@ -1,0 +1,59 @@
+version: "3"
+services:
+  front:
+    image: nginx:1.12
+    volumes:
+      - /data/spider-pro/nginx/html:/usr/share/nginx/html
+      - /data/spider-pro/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "9000:80"
+    restart: always
+    networks:
+      - SpiderPro
+  docs:
+    image: nginx:1.12
+    volumes:
+      - /data/spider-pro/nginx/docs:/usr/share/nginx/html
+      - /data/spider-pro/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "10000:80"
+    restart: always
+    networks:
+      - SpiderPro
+  redis:
+    image: redis:6.0.12
+    volumes:
+      - /data/spider-pro/redis/data:/data
+      - /data/spider-pro/redis/conf/redis.conf:/etc/redis/redis.conf
+    command: redis-server /etc/redis/redis.conf
+    ports:
+      - "16380:6379"
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "13307:3306"
+    volumes:
+      - MysqlData:/var/lib/mysql
+    networks:
+      - SpiderPro
+    env_file:
+      - .spider-pro.env
+    restart: always
+  mq:
+    image: rabbitmq:management
+    env_file:
+      - .spider-pro.env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - MQ:/var/lib/rabbitmq
+    networks:
+      - SpiderPro
+    restart: always
+networks:
+  SpiderPro: #桥接网
+
+volumes:
+  MQ:
+  MysqlData:

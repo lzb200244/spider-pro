@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import pandas as pd
 from abc import ABCMeta, abstractmethod
@@ -42,6 +44,7 @@ class BaseExtract(metaclass=ABCMeta):
     def extract_all_table(self):
         """后期做表格与图"""
         try:
+
             df = pd.read_html(self.content)
 
             for item in df:
@@ -49,11 +52,19 @@ class BaseExtract(metaclass=ABCMeta):
                     df = item
                     break
             else:
-                self.__data_dict['table'] = None
+                #  测试
+                # self.__data_dict['table'] = {
+                #     'columns': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                #     'data': [120, 200, 150, 80, 70, 110, 130],
+                # }
                 raise Error(msg="未发现表格")
+            # df = pd.DataFrame(data=[[120, 200, 150, 80, 70, 110, 130]],
+            #                   columns=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
             df.fillna(value='', inplace=True)
             col = []
             data = []
+            # 创建列
+
             for i, v in enumerate(df.columns):
                 if i == 0:
                     col.append({
@@ -85,7 +96,7 @@ class BaseExtract(metaclass=ABCMeta):
 
     def extract_all_text(self):
         # 文本关键提取
-        self.__data_dict['text'] = ''
+        self.__data_dict['text'] = ''.join(re.sub(r'\s+', ' ', self.soup.get_text()))
 
     def extract_all_chart(self):
         try:
@@ -133,7 +144,7 @@ class BaseExtract(metaclass=ABCMeta):
                 getattr(self, f'extract_all_{opt}')()
             except Error as e:
                 self.add_error({
-                    opt: e.value
+                    opt: e.msg
                 })
 
 

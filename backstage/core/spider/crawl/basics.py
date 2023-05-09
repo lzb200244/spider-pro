@@ -39,11 +39,10 @@ class BaseCrawl(metaclass=ABCMeta):
         """请求时查看数据库是否存在改ip存在就说明之前请求过"""
         # 获取域名
         # 是否存在redis或者是否需要实时数据
-        host = self.params.get('ip')
+        url = self.params.get('url')
         mode = self.params.get('mode')
-        if not mode and self.conn.exists(host):
-            print('redis')
-            self.response_data = self.conn.get(host)
+        if not mode and self.conn.exists(url):
+            self.response_data = self.conn.get(url)
             # 直接进入响应中间件
             content = self.response_data.decode('UTF-8')
             return self.spider_response(content)
@@ -52,7 +51,7 @@ class BaseCrawl(metaclass=ABCMeta):
     def spider_response(self, content):
         """响应"""
         #     存储最新爬取的数据
-        self.conn.set(self.params.get('ip'), self.response_data, ex=REDIS_EXPIRED['week'])  # 字节码
+        self.conn.set(self.params.get('url'), self.response_data, ex=REDIS_EXPIRED['week'])  # 字节码
         content = self.response_data.decode('UTF-8')
         # 解析
         return self.parse(content)  # 解析返回bs4对象和etree对象content文本

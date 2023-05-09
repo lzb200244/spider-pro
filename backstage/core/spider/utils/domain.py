@@ -43,9 +43,10 @@ class Domain:
             """
             # 费时操作
 
-            hostname = f"domain_{self.params['ip']}"
-            print('hostname')
+            hostname = f"domain_{self.params['url']}"
+
             if self.conn.exists(hostname):
+                print('domain-redis')
 
                 return {
                     'domain': json.loads(self.conn.get(hostname))
@@ -54,16 +55,15 @@ class Domain:
             info = whois(self.params['url'])  # Info返回了所有的whois查询信息，可根据需要选择想要提取的查询方法
             domain = {}
             require_items = ['domain_name', 'registrar', 'creation_date', 'expiration_date', 'emails', 'name']
+            # print(info)
             for i in require_items:
                 item = info.get(i)
                 if isinstance(item, list):
-                    domain[i] = item[0]
-                elif isinstance(item, datetime.datetime):
+                    item = item[0]
+                if isinstance(item, datetime.datetime):
                     domain[i] = item.strftime('%Y-%m-%d %H:%M:%S')
                 else:
-                    domain[i] = item or '未知'
-            # domain = {item: str(info.get(item)) for item in require_items}
-            # 每一年更新一次
+                    domain[i] = str(item) or '未知'
             self.conn.set(hostname, json.dumps(domain, ensure_ascii=False), ex=REDIS_EXPIRED['year'])
             return {
                 'domain': domain

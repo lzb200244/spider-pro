@@ -1,12 +1,14 @@
 import hashlib
-
 import jwt
 from django.conf import settings
 from django.conf.global_settings import SECRET_KEY
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
+from django_celery_beat.models import PeriodicTask
+
+from apps.models import BaseModel
 
 
-# class BaseModel(models.Model): pass
 class UserManager(models.Manager):
     """默认过滤掉异常账号"""
 
@@ -16,29 +18,33 @@ class UserManager(models.Manager):
     def check_auth(self, username, password, *args, **kwargs):
         """解密加校验"""
         password = UserInfo.encrypt(password)
-        return super().get_queryset().filter(username=username, password=password)
+
+        return super().get_queryset().get(username=username, password=password)
 
 
-class UserInfo(models.Model):
+class UserInfo(BaseModel, AbstractBaseUser):
     """用户表"""
     objects = UserManager()  # models.Manager() 默认
-    username = models.CharField(max_length=64, verbose_name="用户名", primary_key=True)
+    username = models.CharField(max_length=18, verbose_name="用户名", primary_key=True)
     password = models.CharField(max_length=64, verbose_name="密码")
     email = models.CharField(max_length=64, verbose_name="邮箱", unique=True)
     ACCOUNT_STATUS_CHOICES = (
         (1, "正常"),
         (2, "异常"),
     )
-
+    # CHOICES 是在应用层处理的并不是数据库层处理
     status = models.PositiveSmallIntegerField(choices=ACCOUNT_STATUS_CHOICES, verbose_name="异常账号?", default=1)
     avatar = models.URLField(verbose_name="头像地址", default='', blank=True, null=True)
     # jwt=models.
     create_date = models.DateTimeField(auto_now_add=True, verbose_name="注册时间")
 
     class Meta(object):
-        ordering = ["create_date"]
-        verbose_name = '部门'
+        ordering = ["create_time"]
+        verbose_name = '账户'
         verbose_name_plural = verbose_name
+        indexes = [
+            models.Index(fields=['username', 'password'], name='name_pwd_idx'),
+        ]
 
     def save(self, *args, **kwargs):
         """加密密码"""
@@ -78,5 +84,28 @@ class UserInfo(models.Model):
             'utf-8')
         return token
 
-    def __str__(self):
-        return self.username
+
+class UserPeriodicTask(BaseModel):
+    user = models.ForeignKey(
+        to=UserInfo,
+        on_delete=models.CASCADE,
+        verbose_name="用户与任务"
+    )
+    task = models.ForeignKey(
+        to=PeriodicTask,
+        on_delete=models.CASCADE,
+        verbose_name="任务"
+    )
+
+    class Meta:
+        ordering = ["create_time"]
+        verbose_name = '用户任务'
+        verbose_name_plural = verbose_name
+
+    def delete(self, *args, **kwargs):
+        super(UserPeriodicTask, self).delete(*args, **kwargs)
+        try:
+            PeriodicTask.objects.get(pk=self.task.pk).delete()
+        except PeriodicTask.DoesNotExist as e:
+            print(e)
+            pass

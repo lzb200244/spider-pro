@@ -6,10 +6,12 @@
 ex:账号序列化器
 """
 import copy
+
+from django_celery_beat.models import PeriodicTask
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.account.models import UserInfo
+from apps.account.models import UserInfo, UserPeriodicTask
 from utils.factory.patternFc import Pattern
 
 
@@ -58,3 +60,11 @@ class AccountSerializers(serializers.ModelSerializer):
         data.pop('rePassword')
         obj = UserInfo.objects.create(**data)
         return obj
+
+
+class TaskListSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = PeriodicTask
+        fields = ['id', 'name', 'start_time', 'description']
+
+    pass
