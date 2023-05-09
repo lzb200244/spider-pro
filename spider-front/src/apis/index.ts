@@ -12,7 +12,7 @@ import { getToken } from '@/utils/cookies'
 import { message } from 'ant-design-vue'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
 import { RequestConfig, ResponseAble, responseCode } from './type'
-import { useRouter } from 'vue-router'
+import router from '@/router'
 
 class Request<T> {
   private _instance: AxiosInstance // axios实例
@@ -25,9 +25,13 @@ class Request<T> {
        */
       // 在发送请求之前做些什么
       const token: string = getToken()
-
+      console.log(token)
+      //        'Content-Type': 'application/json',
       if (token) {
+        console.log(config.headers)
         config.headers['jwt-token'] = token
+
+        config.headers['Content-Type'] = 'application/json'
       }
       return config
     }, function (error) {
@@ -53,9 +57,18 @@ class Request<T> {
         return
       }
       switch (status) {
+        case responseCode.Unauthorized: {
+          // 未认证 （未登录
+          return
+        }
         case responseCode.Forbidden: {
           message.warning(error.response.data.msg)
-          return
+          return router.push({
+            path: 'account',
+            query: {
+              next: router.currentRoute.value.fullPath
+            }
+          })
         }
         case responseCode.RETRY_HTTP_CODES:
           message.warning('操作频率过快,已被限流,稍后在试试')
@@ -65,7 +78,6 @@ class Request<T> {
 
       const errorsData: ResponseAble = error.response.data
       if (errorsData.msg) message.info(errorsData.msg)
-
       // 对响应错误做点什么
       return Promise.reject(
         errorsData
@@ -124,13 +136,12 @@ class Request<T> {
 }
 
 const conf: RequestConfig = {
-  // baseURL: 'http://localhost:8000/v1/api',
-  baseURL: 'http://192.168.10.129/v1/api',
-  // baseURL: 'api',
-  timeout: 40000,
+  baseURL: process.env.VUE_APP_BASE_API,
+  timeout: 20000,
   headers: {
-    'X-Custom-Header': `code-miner-${Request.getRules()}` // 反请求
-    // 'jwt-token': get_token()
+    'X-Custom-Header': `code-miner-${Request.getRules()}`
+    // 反请求
+
   }
 }
 export default new Request(conf)

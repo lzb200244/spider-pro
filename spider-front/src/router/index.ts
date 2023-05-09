@@ -7,7 +7,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Account.vue'),
     meta: {
       requireAuth: false,
-      title: '账户'
+      title: '登 录 | 注 册'
     }
   },
   {
@@ -21,8 +21,8 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tasks',
     component: () => import('@/views/Tasks.vue'),
     meta: {
-      requireAuth: true,
-      title: '任务'
+      requireAuth: false,
+      title: '定时任务'
     }
   },
   {
@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/Spider.vue'),
     meta: {
       requireAuth: false,
-      title: '爬虫'
+      title: '爬 虫'
     }
   },
   {

@@ -3,7 +3,12 @@
 
     <a-menu :dashed="true" v-model:selectedKeys="navCurrent" mode="horizontal">
       <a-menu-item v-for="(item) in nav" :key="item.path" :style="item.style">
-        <router-link :class="item.class" :to="item.path">{{ item.text }}</router-link>
+        <template v-if="item.path==='doc'">
+          <a href="//docs.spider-pro.cn" target="_blank">{{ item.text }}</a>
+        </template>
+        <template v-else>
+          <router-link :class="item.class" :to="item.path">{{ item.text }}</router-link>
+        </template>
       </a-menu-item>
       <a-menu-item :style="{marginLeft: 'auto',}" v-if="!user">
         <router-link to="account">

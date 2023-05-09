@@ -1,3 +1,5 @@
+import { Timer } from '@/hooks/useTask/type'
+
 type domain = 'creation_date' | 'domain_name' | 'emails' | 'expiration_date' | 'name' | 'registrar'
 export type DomainResponseAble = Record<domain, string>
 
@@ -36,15 +38,29 @@ export type SpiderResponseOptionAble = Partial<SpiderResponseAble>
 /**
  * 爬虫参数
  */
+export interface Task {
+  // 定时任务邮箱
+  email: string;
+  // 名称
+  name: string;
+  // 任务描述
+  desc: string;
+  rules?: Timer<any>; // 定时任务执行时间
+}
+
 export interface SpiderConf {
   url: string; // 爬取的地址
   opt: string[]; // 爬取的选项
-  type: string; // 爬取的类型（前后端分离？）
-  mode: boolean; // 是否需要
+  mode: boolean; // 是否需要动态爬取
   static: boolean; // 是否需要静态的
-  email?: string; // 定时任务邮箱
-  name?: string; // 定时任务名称
-  time?: string; // 定时任务执行时间
-  customOptions?: any[]; // 自定义选项
+  // 任务类类型
+  type: string;
+  // 名称
+  name?: string;
+  // 定时任务名称
+  email?: string;
+  // 任务描述
+  desc?: string;
+  time?: Timer<any>; // 定时任务执行时间
   [key: string]: any; // 其他可选参数
 }

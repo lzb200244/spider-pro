@@ -19,7 +19,7 @@
           </el-row>
           <el-row v-else>
             <template v-if="!success">
-              <spider-desc v-model:response="response"/>
+              <spider-desc :response="response"/>
             </template>
             <template v-else>
               <a-empty/>
@@ -59,6 +59,7 @@ const startSpider = (): void => {
  */
 
 const spiderSuccess = (data: SpiderResponseOptionAble): void => {
+  console.log(data)
   loading.value = false
   success.value = false
   response.value = data

@@ -14,7 +14,9 @@ router.beforeEach(
     showFullLoading()
 
     const token = getToken() // get_token() ||
-
+    if (typeof to.meta.title === 'string') {
+      document.title = to.meta.title
+    }
     if (token) {
       /**
        * 如果有token已经登录

@@ -34,7 +34,7 @@
           </a-form-item>
 
           <a-form-item style="margin-bottom: 5px;">
-            <router-link class="login-form-forgot float-right" to="home">返回主页</router-link>
+            <router-link class="login-form-forgot float-right" to="/">返回主页</router-link>
           </a-form-item>
           <a-form-item>
             <a-button style="height: 35px" block type="primary" html-type="submit"

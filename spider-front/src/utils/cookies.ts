@@ -6,7 +6,7 @@ type Key = string
  * 获取cookies
  * @param key
  */
-export function getToken(key: Key = 'JWT_TOKEN'): string {
+export function getToken(key: Key = 'jwt-token'): string {
   return Cookies.get(key)
 }
 
@@ -31,7 +31,7 @@ export const setToken:setToken = function (key, token) {
  * 删除token
  * @param key
  */
-export function removeToken(key: Key = 'JWT_TOKEN') {
+export function removeToken(key: Key = 'jwt-token') {
   // console.log(Cookies.delete(key))
   return Cookies.delete(key)
 }

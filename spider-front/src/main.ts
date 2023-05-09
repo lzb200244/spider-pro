@@ -36,7 +36,7 @@ import {
   Select, Dropdown, Checkbox, Table, Popconfirm, Skeleton, Radio
 } from 'ant-design-vue'
 
-const ANTDS = [
+const ANTD = [
   Form,
   Radio,
   Tag,
@@ -63,9 +63,10 @@ const ANTDS = [
 ]
 
 const app = createApp(App)
-ANTDS.forEach(item => {
-  app.use(item)
-})
+for (const antd of ANTD) {
+  app.use(antd)
+}
+
 app.use(router)
 
 app.use(store) // store对象

@@ -2,11 +2,6 @@
 
   <div>
 
-<!--    <a-checkbox v-model:checked="checkAll"-->
-<!--                :indeterminate="indeterminate"-->
-<!--                @change="onCheckAllChange">-->
-<!--      all-->
-<!--    </a-checkbox>-->
     <a-button @click="downloadImg">下载</a-button>
   </div>
   <div class="content m-md">
@@ -78,6 +73,7 @@ export default {
 
       if (checkBox.checkedList.length !== 0) {
         checkBox.checkedList.forEach(item => {
+          // 放入promise里
           try {
             download(item)
           } catch (e) {

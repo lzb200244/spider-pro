@@ -11,7 +11,12 @@ const navData: Nav = [
     path: 'tasks',
     text: '定时任务'
   },
+  {
+    path: 'doc',
+    text: '文 档',
+    icon: '<home-two-tone></home-two-tone>'
 
+  },
   {
     path: 'test',
     text: '测 试',

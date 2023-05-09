@@ -48,24 +48,23 @@ export default () => {
    * 登录
    * @param forms
    */
-  const Login = (forms: AccountFormReadonly): void => {
-    login(forms).then(res => {
-      store.commit('setUser', res)
-      // this.saveUser(res)
-      setToken('JWT_TOKEN', res.data.token)
-      message.success('登入成功')
-      const next = router.currentRoute.value.query.next as string ?? 'spider'
-      router.push(next)
-    })
+  const Login = async (forms: AccountFormReadonly): Promise<void> => {
+    const res = await login(forms)
+    store.commit('setUser', res)
+    // this.saveUser(res)
+    setToken('jwt-token', res.data.token)
+    setToken('setToken', res.data.token)
+    message.success('登入成功')
+    const next = router.currentRoute.value.query.next as string ?? 'spider'
+    router.push(next)
   }
   /**
    * 注册
    */
-  const Register = (forms: AccountFormReadonly): void => {
-    register(forms).then(res => {
-      message.info('注册成功')
-      activeKey.value = 'login'
-    })
+  const Register = async (forms: AccountFormReadonly): Promise<void> => {
+    await register(forms)
+    message.info('注册成功')
+    activeKey.value = 'login'
   }
   return {
     LoginFormState,

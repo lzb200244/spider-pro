@@ -1,13 +1,18 @@
 import * as echarts from 'echarts'
 import type { Ref } from 'vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted } from 'vue'
 import { ChartData } from '@/hooks/useEcharts/types'
 
 export default function useEcharts(
   domRef: Ref<HTMLDivElement>,
-  data:ChartData
+  data: ChartData
 ) {
   // Object.assign(data, )
+  // data = {
+  //   yData: [[120, 200, 150, 80, 70, 110, 130]],
+  //
+  //   xData: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  // }
   const baseConf = {
     title: {
       text: '某某数据',

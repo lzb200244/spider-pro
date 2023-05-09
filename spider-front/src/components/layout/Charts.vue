@@ -18,7 +18,10 @@ import useEcharts from '@/hooks/useEcharts'
 const chartDom = ref()
 const chart = ref<'bar' | 'line' | 'pie'>('bar')
 const props = defineProps(['chart'])
-const { chartOpt, initEcharts } = useEcharts(chartDom, props?.chart)
+
+const { chartOpt, initEcharts } = useEcharts(chartDom,
+  props?.chart
+)
 // 初始化echarts
 onMounted(() => {
   initEcharts()
