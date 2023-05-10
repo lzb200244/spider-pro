@@ -49,11 +49,15 @@ ImgList = List[Optional[str]]
 DomainMap = Mapping[str, str]
 
 
+class TaskType(Enum):
+    Spider = 'spider'
+    Task = 'task'
+
+
 class Params(TypedDict, ):
     # url
     url: str
-    # ip
-    ip: str
+
     # 模块
     opt: List[str]
     # 是否是静态

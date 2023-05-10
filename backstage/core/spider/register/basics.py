@@ -17,7 +17,7 @@ from datetime import datetime
 from django_celery_beat.models import IntervalSchedule, PeriodicTask, CrontabSchedule
 from apps.account.models import UserInfo, UserPeriodicTask
 from core.spider.errors.basics import Error
-from type.spider.main import TimeType, Task, Params
+from type.spider.main import TimeType, Task, Params, TaskType
 
 DEFAULT_TASK_NAME = 'apps.spider.tasks.save_task'
 
@@ -197,20 +197,28 @@ class RegisterUserTasks:
     def create(self) -> Dict:
         try:
             task_data = self.assign_strategy.assign(self.params, self.task)
+            # 注册任务
             task = PeriodicTask.objects.create(
                 **task_data
             )
             # 任务与用户关系
-            if self.task is not None:
+            print(self.params)
+            if self.params['type'] == TaskType.Task.value:
                 UserPeriodicTask.objects.create(
                     task=task,
                     user=self.user
                 )
-            return {
-                'id': task.pk,
-                'name': task.name,
-                'start_time': task.start_time.timestamp(),
-                'description': ''
-            }
+                return {
+                    'task':
+                        {
+                            'id': task.pk,
+                            'name': task.name,
+                            'start_time': task.start_time,
+                            'description': ''
+                        }
+                }
+
         except ValidationError:
+            if self.params['type'] == TaskType.Spider.value:
+                return {}
             raise Error('任务名称已经存在了')

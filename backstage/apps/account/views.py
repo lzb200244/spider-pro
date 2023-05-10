@@ -3,20 +3,22 @@
 # from pyecharts.charts import Bar
 # from pyecharts.options import TitleOpts
 import logging
+import time
 
+from django.contrib.auth import authenticate
 from django_celery_beat.models import PeriodicTask
+from rest_framework.exceptions import ErrorDetail, ValidationError
 from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import CreateModelMixin, ListModelMixin
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModelMixin
 from rest_framework.views import APIView
-from apps.account.models import UserInfo
-from apps.account.serializer import AccountSerializers, TaskListSerializers
+from apps.account.models import UserInfo, UserPeriodicTask
+from apps.account.serializer import AccountSerializers, UserTaskListSerializers
 from core.spider.errors.basics import Error
 from extensions.auth.jwtauthentication import JWTNotAuthenticatedException
 from extensions.permissions.IsAuthenticated import CustomIsAuthenticated
 from utils.decorates.exception import handle_exceptions
 from utils.pagination.TasksCursorPagination import TasksCursorPagination
 from utils.response.response import APIResponse
-
 
 
 # 获取单例日志对象
@@ -30,15 +32,14 @@ class LoginAPIView(APIView):
          username:账号
          password:密码
         """
-        try:
-            user_obj = UserInfo.objects.check_auth(**request.data)
-        except UserInfo.DoesNotExist:
-            raise Error(msg='用户名或密码错误', code=1201, status=401)
+        user = authenticate(**request.data)
+        if user is None:
+            return APIResponse(msg='用户名或密码错误', code=1203, status=401)
         # 存在
         # 传入user对象
         # 生成jwt
-        token = user_obj.get_token()
-        return APIResponse(data={'username': user_obj.username, 'token': token})
+        token = user.get_token()
+        return APIResponse(data={'username': user.username, 'token': token})
 
 
 class RegisterAPIView(CreateModelMixin, GenericAPIView):
@@ -48,17 +49,19 @@ class RegisterAPIView(CreateModelMixin, GenericAPIView):
     def post(self, request, *args, **kwargs):
         """用户注册"""
         ser_obj = AccountSerializers(data=request.data)
+
         if ser_obj.is_valid():
             ser_obj.save()
             return APIResponse(data=ser_obj.data, msg='注册成功')
+
         # return APIResponse()
         # print(ser_obj.errors)
-        # errors=[]
-        # for k,v in ser_obj.errors.items():
-        #     errors.append(v)
-        # print(str(errors[0]))
+
+        msgs = list(ser_obj.errors.values())[0]
+
         # todo 未完成
-        return APIResponse(msg=ser_obj.errors.values(), code=1201, status=401)
+
+        return APIResponse(msg=msgs[0], code=1201, status=401)
 
 
 class AccountView(APIView):
@@ -81,26 +84,32 @@ class AccountView(APIView):
         pass
 
 
-class TasksListView(ListModelMixin, GenericAPIView, ):
+class TasksListView(ListModelMixin, DestroyModelMixin, GenericAPIView, ):
     permission_classes = [CustomIsAuthenticated]
-    queryset = PeriodicTask.objects.all()
-    serializer_class = TaskListSerializers
+    serializer_class = UserTaskListSerializers
     pagination_class = TasksCursorPagination
 
-    # def get_queryset(self):
-    # print()
-    # return UserPeriodicTask.objects.select_related('task').filter(user=self.request.user).values(
-    #     'task_id', 'task__name', 'task__start_time', 'task__description'
-    # )
+    def get_queryset(self):
+        # 底层会转换为user_id=user_id进行过滤（走索引
+
+        return UserPeriodicTask.objects.select_related('task').filter(user=self.request.user)
 
     def get(self, request, *args, **kwargs):
+
         return APIResponse(self.list(request).data)
 
-    @handle_exceptions(log_name='account')
-    def delete(self, request, *args, **kwargs):
-        pass
+    def get_object(self):
+        task_id = self.request.data.get('id')
 
-        # 删除任务队列定对于任务
+        return UserPeriodicTask.objects.get(user=self.request.user,
+                                            task_id=task_id)
+
+    def delete(self, request, *args, **kwargs):
+
+        try:
+            return self.destroy(request)
+        except UserPeriodicTask.DoesNotExist:
+            return APIResponse(status=404, msg='该任务或已经不存在', code=1204)
 
 
 class TestAPIView(APIView):

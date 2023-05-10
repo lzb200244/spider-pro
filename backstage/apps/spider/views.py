@@ -39,6 +39,7 @@ class SpiderView(APIView):
                 res = run(data)
                 data.update({
                     'mode': True, 'static': True,
+
                     'task': {
                         "name": data['url'],
                         "desc": "站内定时任务",

@@ -23,8 +23,7 @@ class AccountSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = UserInfo
-        fields = '__all__'
-        excludes = ['status', 'avatar']
+        fields = ['username', 'password', 'rePassword', 'email']
 
     def validate_username(self, value):
 
@@ -63,8 +62,29 @@ class AccountSerializers(serializers.ModelSerializer):
 
 
 class TaskListSerializers(serializers.ModelSerializer):
+    start_time = serializers.SerializerMethodField()
+
     class Meta:
         model = PeriodicTask
         fields = ['id', 'name', 'start_time', 'description']
 
-    pass
+    def get_start_time(self, task, ):
+        return task.start_time if not task.start_time else task.start_time.timestamp() * 1000
+
+
+class UserTaskListSerializers(serializers.ModelSerializer):
+    # task = serializers.SerializerMethodField()
+    task =TaskListSerializers()
+
+    class Meta:
+        model = UserPeriodicTask
+        fields = ['task']
+
+    # def get_task(self, query):
+    #
+    #     return {
+    #         'id': query.task.pk,
+    #         'name': query.task.name,
+    #         'description': query.task.description,
+    #         'start_time': query.task.start_time,
+    #     }
