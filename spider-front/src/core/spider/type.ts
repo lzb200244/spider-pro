@@ -56,11 +56,6 @@ export interface SpiderConf {
   // 任务类类型
   type: string;
   // 名称
-  name?: string;
-  // 定时任务名称
-  email?: string;
-  // 任务描述
-  desc?: string;
-  time?: Timer<any>; // 定时任务执行时间
+  task?: Task; // 定时任务执行时间
   [key: string]: any; // 其他可选参数
 }

@@ -30,13 +30,15 @@ const account = () => {
     { url: 'account/' }
   )
 }
-const getTasks = () => {
+const getTasks = (cursor? :string) => {
   /**
    * 获取用户任务列表
    */
   return instance.get<ResponseAble>({
-    url: 'account/tasks'
-
+    url: 'account/tasks',
+    params: {
+      cursor
+    }
   })
 }
 const delTask = (id: string) => {

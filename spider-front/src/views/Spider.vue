@@ -59,7 +59,6 @@ const startSpider = (): void => {
  */
 
 const spiderSuccess = (data: SpiderResponseOptionAble): void => {
-  console.log(data)
   loading.value = false
   success.value = false
   response.value = data

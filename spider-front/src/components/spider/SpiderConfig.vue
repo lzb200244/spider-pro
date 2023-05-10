@@ -100,6 +100,7 @@ import { SpiderConf, Task } from '@/core/spider/type'
 import { spiderDomain } from '@/apis/spider'
 import { message } from 'ant-design-vue'
 import { Time, Timer } from '@/hooks/useTask/type'
+import { store } from '@/store'
 
 const emailOption = ref<{ value: string }[]>([])
 /**
@@ -145,10 +146,13 @@ const formConfig = reactive<SpiderConf>({
   mode: false,
   static: false,
   type: props.type,
+  task: {} as Task,
+  // 无用的参数用来当零时的
+
   name: '',
   email: '',
-  desc: '',
-  time: {} as Timer<any>
+  description: '',
+  time: ''
 
 })
 /**
@@ -182,7 +186,7 @@ const SendConfig = (form: SpiderConf) => {
   emits('startSpider')
   loading.value = true
   const status = true
-  const task:Task = {}as Task
+  const task: Task = {} as Task
   if (formConfig.type === 'task') {
     Object.assign(
       task,
@@ -198,7 +202,7 @@ const SendConfig = (form: SpiderConf) => {
     formConfig, {
       email: undefined,
       name: undefined,
-      desc: undefined,
+      description: undefined,
       time: undefined
     }
   )
@@ -218,6 +222,10 @@ const SendConfig = (form: SpiderConf) => {
     )
     // 爬取成功
     emits('spiderSuccess', res.data, status)
+
+    if (props.type === 'task') {
+      store.commit('addTask', [res.data])
+    }
     message.success(res.msg)
   }).catch(res => {
     emits('spiderFailed')

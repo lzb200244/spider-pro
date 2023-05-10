@@ -52,17 +52,23 @@ class Request<T> {
     }, function (error) {
       // 超出 2xx 范围的状态码都会触发该函数。
       const status: number = error.response.status
+
+      const data:ResponseAble = error.response.data
+
       if (status >= responseCode.Error) {
         message.error('服务端错误error')
         return
       }
       switch (status) {
         case responseCode.Unauthorized: {
+          if (data.code === 1203) {
+            message.warning(data.msg)
+          }
           // 未认证 （未登录
           return
         }
         case responseCode.Forbidden: {
-          message.warning(error.response.data.msg)
+          message.warning(data.msg)
           return router.push({
             path: 'account',
             query: {
@@ -76,11 +82,10 @@ class Request<T> {
           return
       }
 
-      const errorsData: ResponseAble = error.response.data
-      if (errorsData.msg) message.info(errorsData.msg)
+      if (data.msg) message.info(data.msg)
       // 对响应错误做点什么
       return Promise.reject(
-        errorsData
+        data
       )
     })
   }

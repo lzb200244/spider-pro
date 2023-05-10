@@ -1,9 +1,14 @@
 import { Tasks } from '@/apis/type'
 
+export interface ITask {
+  next: string | null,
+  results: Array<{ task: Record<Tasks, string> }>
+}
+
 interface State {
   // 用户信息
   user: string,
-  tasks: any[]
+  tasks: ITask
 }
 
 interface Mutations {
@@ -16,9 +21,9 @@ interface Mutations {
 
   deleteTask(state: State, id: string): void,
 
-  setTasks(state: State, task: Array<Record<Tasks, string>>): void,
+  setTasks(state: State, task: ITask): void,
 
-  addTask(state: State, tasks: Record<Tasks, string>): void,
+  addTask(state: State, tasks: Array<{ task: Record<Tasks, string> }>): void,
 
   /**
    * 删除用户信息
