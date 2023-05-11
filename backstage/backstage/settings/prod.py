@@ -12,7 +12,9 @@ try:
 
     from backstage.settings.base import *
 except ImportError as e:
-    print(e)
+    print('导入错误')
+    raise e
+    # print(e)
 DEBUG = False
 # ################################################DRF配置
 

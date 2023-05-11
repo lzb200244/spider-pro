@@ -14,13 +14,6 @@ class UserInfo(BaseModel, AbstractUser):
     """用户表"""
     id = models.PositiveBigIntegerField(primary_key=True, verbose_name='用户id')
     username = models.CharField(max_length=18, verbose_name="用户名", unique=True)
-    # ACCOUNT_STATUS_CHOICES = (
-    #     (1, "正常"),
-    #     (2, "异常"),
-    # )
-    #
-    # # CHOICES 是在应用层处理的并不是数据库层处理
-    # status = models.PositiveSmallIntegerField(choices=ACCOUNT_STATUS_CHOICES, verbose_name="异常账号?", default=1)
     avatar = models.URLField(verbose_name="头像地址", default='', blank=True, null=True)
 
     class Meta(object):
@@ -35,16 +28,7 @@ class UserInfo(BaseModel, AbstractUser):
         """加密密码"""
         if not self.id:
             self.id = snowflake.snowflake.generate_id()
-        # self.password = self.encrypt(self.password)
         super(UserInfo, self).save(*args, **kwargs)
-
-    # @staticmethod
-    # def encrypt(password):
-    #     """加密"""
-    #     md5 = hashlib.md5()
-    #     md5.update(password.encode('utf8'))
-    #     md5.update(SECRET_KEY.encode('utf8'))
-    #     return md5.hexdigest()
 
     def get_token(self) -> str:
         """
@@ -59,7 +43,7 @@ class UserInfo(BaseModel, AbstractUser):
         }
         payload = {
             'id': self.pk,
-            'name': self.username,
+            'username': self.username,
             'exp': settings.JWT_CONF.get('exp', 60)
         }
 
@@ -67,12 +51,6 @@ class UserInfo(BaseModel, AbstractUser):
             "utf-8").decode(
             'utf-8')
         return token
-
-    # def check_auth(self, username, password, *args, **kwargs):
-    #     """解密加校验"""
-    #     password = UserInfo.encrypt(password)
-    #
-    #     return self.objects.get(username=username, password=password)
 
 
 class UserPeriodicTask(BaseModel):
@@ -86,7 +64,6 @@ class UserPeriodicTask(BaseModel):
         on_delete=models.CASCADE,
         verbose_name="任务"
     )
-
 
     class Meta:
         ordering = ["create_time"]

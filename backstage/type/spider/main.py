@@ -6,23 +6,13 @@ file-name:main
 ex:
 """
 from typing import (
-    List, Union, Optional, Mapping, TypedDict, Any, TypeVar
+    List, Union, Optional, Mapping, TypedDict
 )
 import datetime
-from enum import Enum
-from dataclasses import dataclass, field
 
-from core.spider.errors.basics import Error
+from typing import TypeVar, Dict, Any, Type, Callable, cast
 
-
-class TimeType(Enum):
-    # 单次的
-    SINGLE = 'single'
-    # 天
-    DAILY = 'daily'
-    # 周
-    WEEKLY = 'weekly'
-    MONTHLY = 'monthly'
+from enums.spider import TimeType
 
 
 class Timer(TypedDict):
@@ -42,18 +32,6 @@ class Task(TypedDict):
     rules: Rules
 
 
-# Img = NewType("Img", List[str])
-# 爬爬取图片列表
-ImgList = List[Optional[str]]
-# 域名信息
-DomainMap = Mapping[str, str]
-
-
-class TaskType(Enum):
-    Spider = 'spider'
-    Task = 'task'
-
-
 class Params(TypedDict, ):
     # url
     url: str
@@ -69,27 +47,54 @@ class Params(TypedDict, ):
     task: Task
 
 
-# def isextend(types, T:Params):
-#     def c() -> T:
-#         s = set(T.__annotations__) - set(types.keys())
-#         if s:
-#             print(s.pop())
-#             raise Error('参数错误')
-#         return types
-#
-#     return c()
+# Img = NewType("Img", List[str])
+# 爬爬取图片列表
+ImgList = List[Optional[str]]
+# 域名信息
+DomainMap = Mapping[str, str]
+
+# 声明类型变量 T
 
 
-c1 = {
-    'url': 'str',
-    # ip
-    'ip': str,
-    # 模块
-    'opt': List[str],
-    # 是否是静态
-    'static': bool,
-    # 是否要实时的
-    'mode': bool,
-    # 任务
-    'task': Task,
-}
+T = TypeVar('T', bound=Type[Dict[str, Any]])
+
+
+def inherit(T: T, opt: set = {}, *args, **kwargs) -> Callable[[Dict[str, Any]], T]:
+    """
+    创建一个闭包，检查字典是否匹配指定类型，并返回该字典的类型为 T 的子类型。
+
+    :param T: 一个 TypedDict 的子类，用于指定期望的键和值类型。
+    :param opt: 可选参数。
+    :return: 一个函数，该函数接收一个字典，如果它匹配 T，则返回一个 T 的子类型。
+    :raises AssertionError: 如果字典中存在不在 T 中的键。
+    """
+
+    def inner(dic: Dict[str, Any]) -> T:
+        # 存在未继承完成
+        extend = set(
+            T.__annotations__.keys()) - set(dic.keys())
+        set(dic.keys()).difference(set(
+            T.__annotations__.keys()))
+        if extend and not extend.issubset(opt):
+            raise KeyError(
+                f"Expected keys {set(T.__annotations__.keys())}, but got keys {set(dic.keys())}"
+            )
+
+        return cast(T, dic)  # 将字典强制转换为 T 的子类型，以使类型检查器能够正确验证类型。
+
+    return inner
+
+
+if __name__ == '__main__':
+    c1 = {2}
+    c2 = {2, 45}
+    c3 = {2, 45}
+    print(c2.difference(c1))
+    c = {
+        'url': 222,
+        'opt': 222,
+        'static': 'www',
+        'mode': True,
+
+    }
+    inherit(Params, {'task'})(c)

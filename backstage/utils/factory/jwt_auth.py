@@ -17,7 +17,7 @@ def create_token(query_obj):
     }
     payload = {
         'id': query_obj.pk,
-        'name': query_obj.username,
+        'username': query_obj.username,
         'exp': settings.JWT_CONF.get('exp', 60)
     }
 

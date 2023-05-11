@@ -8,6 +8,7 @@ ex:
 from abc import ABC, abstractmethod
 from typing import Dict
 
+from enums.spider import TaskTypeEnum
 from script import __init__script
 import json
 import re
@@ -17,7 +18,7 @@ from datetime import datetime
 from django_celery_beat.models import IntervalSchedule, PeriodicTask, CrontabSchedule
 from apps.account.models import UserInfo, UserPeriodicTask
 from core.spider.errors.basics import Error
-from type.spider.main import TimeType, Task, Params, TaskType
+from type.spider.main import TimeType, Task, Params
 
 DEFAULT_TASK_NAME = 'apps.spider.tasks.save_task'
 
@@ -202,8 +203,8 @@ class RegisterUserTasks:
                 **task_data
             )
             # 任务与用户关系
-            print(self.params)
-            if self.params['type'] == TaskType.Task.value:
+
+            if self.params['type'] == TaskTypeEnum.Task.value:
                 UserPeriodicTask.objects.create(
                     task=task,
                     user=self.user
@@ -213,12 +214,12 @@ class RegisterUserTasks:
                         {
                             'id': task.pk,
                             'name': task.name,
-                            'start_time': task.start_time,
+                            'start_time': task.start_time if not task.start_time else task.start_time.timestamp() * 1000,
                             'description': ''
                         }
                 }
 
         except ValidationError:
-            if self.params['type'] == TaskType.Spider.value:
+            if self.params['type'] == TaskTypeEnum.Spider.value:
                 return {}
             raise Error('任务名称已经存在了')

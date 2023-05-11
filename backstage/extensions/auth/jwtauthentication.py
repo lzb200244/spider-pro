@@ -2,6 +2,7 @@
 # @Time : 2022/12/24 10:05
 # @Site : https://www.codeminer.cn
 import jwt
+from django.core.exceptions import FieldError
 from rest_framework import status
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed, ParseError, APIException
@@ -19,7 +20,7 @@ ex:自定义jwt认证类
 class JWTNotAuthenticatedException(APIException):
     status_code = status.HTTP_401_UNAUTHORIZED
     default_detail = {
-        'code': CodeResponseEnum.Unauthorized.value,
+        'code': CodeResponseEnum.Unauthorized,
         'msg': '未登录'
     }
 
@@ -34,7 +35,7 @@ class JWTAuthentication(BaseAuthentication):
         jwt_token = request.META.get("HTTP_JWT_TOKEN")
         my_header = request.META.get('HTTP_X_CUSTOM_HEADER')
         # 非法请求
-        errors = ParseError(detail={'code': 1201, 'msg': 'illegal request 400 ', 'data': ''})
+        errors = ParseError(detail={'code': CodeResponseEnum.Unauthorized, 'msg': 'illegal request 400 '})
         if not my_header:
             raise errors
         if not pat_obj['header'].match(my_header):
@@ -53,16 +54,17 @@ class JWTAuthentication(BaseAuthentication):
             # print(payload)
         except jwt.exceptions.ExpiredSignatureError:
             # 1101 过期
-            raise AuthenticationFailed(detail={'code': 1201, 'msg': 'token认证失效', 'data': ''})
+            raise AuthenticationFailed(detail={'code': CodeResponseEnum.Unauthorized, 'msg': 'token认证失效'})
         except jwt.exceptions.DecodeError:
             # 解码错误
-            raise AuthenticationFailed(detail={'code': 1201, 'msg': 'token错误', 'data': ''}, )
+            raise AuthenticationFailed(detail={'code': CodeResponseEnum.Unauthorized, 'msg': 'token错误', }, )
         except jwt.exceptions.InvalidTokenError:
             # 非法token
-            raise AuthenticationFailed(detail={'code': 1201, 'msg': '非法token', 'data': ''})
+            raise AuthenticationFailed(detail={'code': CodeResponseEnum.Unauthorized, 'msg': '非法token', })
         try:
-            user = UserInfo.objects.get(username=payload.get('name'))
-        except UserInfo.DoesNotExist as e:
+            payload.pop('exp')
+            user = UserInfo.objects.only('id', 'username').get(**payload)
+        except UserInfo.DoesNotExist:
             raise JWTNotAuthenticatedException()
 
         return user, jwt_token  # 认证通过

@@ -17,7 +17,8 @@ from utils.factory.patternFc import Pattern
 
 class AccountSerializers(serializers.ModelSerializer):
     pat = Pattern()
-    rePassword = serializers.CharField(max_length=32, )
+    rePassword = serializers.CharField(max_length=128, write_only=True)
+    password = serializers.CharField(max_length=128, write_only=True)
     username = serializers.CharField(max_length=20)
     email = serializers.CharField(max_length=64)
 
@@ -54,10 +55,38 @@ class AccountSerializers(serializers.ModelSerializer):
 
         return attrs
 
+    """
+    
+        def is_valid(self, *, raise_exception=False):
+            if not hasattr(self, '_validated_data'):
+                try:
+                    self._validated_data = self.run_validation(self.initial_data)
+                except ValidationError as exc:
+    
+                    self._validated_data = {}
+                    self._errors = exc.detail
+                else:
+                    self._errors = {}
+    
+            # todo 对isvalid方法重写自定义返回结果
+            if self._errors and raise_exception:
+                msgs = '注册失败'
+                try:
+                    msgs = list(self.errors.values())[0][0]
+                except (AttributeError, TypeError, KeyError)as e:
+                    raise ValidationError(
+                        detail={
+                            'msg': msgs,
+                            'code': 1201
+                        }
+                    )
+                return not bool(self._errors)
+    """
+
     def save(self, **kwargs):
         data = copy.deepcopy(self.validated_data)
         data.pop('rePassword')
-        obj = UserInfo.objects.create(**data)
+        obj = UserInfo.objects.create_user(**data)
         return obj
 
 
@@ -74,7 +103,7 @@ class TaskListSerializers(serializers.ModelSerializer):
 
 class UserTaskListSerializers(serializers.ModelSerializer):
     # task = serializers.SerializerMethodField()
-    task =TaskListSerializers()
+    task = TaskListSerializers()
 
     class Meta:
         model = UserPeriodicTask

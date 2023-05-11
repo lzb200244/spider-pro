@@ -6,9 +6,13 @@ file-name:error
 ex:
 """
 
+from enums.response import StatusResponseEnum
+
+from enums.response import CodeResponseEnum
+
 
 class Error(Exception):
-    def __init__(self, msg='操作失败', status=400, code=1200):
+    def __init__(self, msg='操作失败', status=StatusResponseEnum.BadRequest, code=CodeResponseEnum.NotFound):
         self.msg = msg
         self.status = status
         self.code = code
@@ -16,9 +20,6 @@ class Error(Exception):
         super(Error, self).__init__(msg, status, code)
 
     pass
-
-
-
 
 
 class NothingDoError(Error):

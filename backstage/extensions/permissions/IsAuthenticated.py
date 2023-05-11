@@ -9,6 +9,8 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission
 
+from enums.response import CodeResponseEnum
+
 
 class CustomIsAuthenticated(BasePermission):
 
@@ -16,5 +18,5 @@ class CustomIsAuthenticated(BasePermission):
         # 需要登录
 
         if isinstance(request.user, AnonymousUser) or request.user is None:
-            raise PermissionDenied({'msg': '请先登录！！', 'code': 1023})
+            raise PermissionDenied({'msg': '请先登录！！', 'code': CodeResponseEnum.Forbidden})
         return True

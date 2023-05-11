@@ -93,9 +93,7 @@ def redis_conf(index):
 
 
 CACHES = {
-
     item: redis_conf(index) for index, item in enumerate(CATCH_LIST)
-
 }
 DATABASES = {
     'default': {

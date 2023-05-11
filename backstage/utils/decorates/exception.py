@@ -15,7 +15,7 @@ def handle_exceptions(log_name='account'):
                 return APIResponse(**e.__dict__)
             except Exception as e:
                 logger.error(e)
-                return APIResponse(msg='服务的异常', status=500, code=1300)
+                return APIResponse(code=1300, msg='服务的异常', status=500)
 
         return inner
 
