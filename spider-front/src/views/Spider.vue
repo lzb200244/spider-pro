@@ -1,5 +1,5 @@
 <template>
-  <a-layout-content>
+
     <a-row>
       <a-col :md="24" :xs="24" :lg="12" class="p-sm">
         <a-card style="min-height: 400px" title="输入配置项">
@@ -30,7 +30,7 @@
         </a-card>
       </a-col>
     </a-row>
-  </a-layout-content>
+
 </template>
 
 <script lang="ts" setup>

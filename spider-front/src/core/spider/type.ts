@@ -56,6 +56,6 @@ export interface SpiderConf {
   // 任务类类型
   type: string;
   // 名称
-  task?: Task; // 定时任务执行时间
+  task?: Task|null; // 定时任务执行时间
   [key: string]: any; // 其他可选参数
 }

@@ -1,93 +1,92 @@
 <template>
-
-  <el-row>
-    <a-form
-      layout="vertical"
-      :model="formConfig"
-      name="basic"
-      autocomplete="off"
-      @finish="SendConfig">
-      <a-form-item>
-        <a-radio-group v-model:value="example">
-          <a-radio-button value="example1">例子1</a-radio-button>
-          <a-radio-button value="example2">例子2</a-radio-button>
-          <a-radio-button value="example3">例子3</a-radio-button>
-        </a-radio-group>
-      </a-form-item>
-      <a-form-item
-        label="URL"
-        name="url"
-        :rules="[{ required: true,type:'url', message: '请输正确网站地址!' }]">
-
-        <a-input placeholder="请输入需要爬取的地址" v-model:value="formConfig.url"/>
-
-      </a-form-item>
-      <a-form-item
-        label="选择模块"
-        name="opt"
-        :rules="[{ required: true, message: '请选择模块!' }]">
-        <a-select
-          v-model:value.trim="formConfig.opt"
-          mode="multiple"
-          style="width: 100%"
-          :value="value"
-          placeholder="请选择需要的模块(可多选)"
-          :options="options"></a-select>
-      </a-form-item>
-
-      <template v-if="type==='task'">
-        <a-form-item
-          label="任务名称"
-          name="name"
-          :rules="[{ required: true, message: '请输任务名称!' }]">
-          <a-input v-model:value="formConfig.name" placeholder="任务名称"/>
+  <div>
+    <el-row>
+      <a-form
+        layout="vertical"
+        :model="formConfig"
+        name="basic"
+        autocomplete="off"
+        @finish="SendConfig">
+        <a-form-item>
+          <a-radio-group v-model:value="example">
+            <a-radio-button value="example1">例子1</a-radio-button>
+            <a-radio-button value="example2">例子2</a-radio-button>
+            <a-radio-button value="example3">例子3</a-radio-button>
+          </a-radio-group>
         </a-form-item>
         <a-form-item
-          label="发送的邮箱"
-          name="email"
-          :rules="[{ required: true,type:'email', message: '请输正确邮箱!' }]">
-          <a-auto-complete
-            v-model:value="formConfig.email"
-            style="width: 200px"
-            placeholder="请输入要发送的邮箱"
-            :options="emailOption"
-            @search="handleSearch"
-          >
-            <template #option="{ value: val }">
-              {{ val.split('@')[0] }} @
-              <span style="font-weight: bold">{{ val.split('@')[1] }}</span>
-            </template>
-          </a-auto-complete>
-        </a-form-item>
-        <a-form-item label="执行时间"
+          label="URL"
+          name="url"
+          :rules="[{ required: true,type:'url', message: '请输正确网站地址!' }]">
 
-                     :rules="[{ required: true,message: '选择日期' }, ]">
-          <time-picker v-model="formConfig.time"/>
-        </a-form-item>
+          <a-input placeholder="请输入需要爬取的地址" v-model:value="formConfig.url"/>
 
+        </a-form-item>
+        <a-form-item
+          label="选择模块"
+          name="opt"
+          :rules="[{ required: true, message: '请选择模块!' }]">
+          <a-select
+            v-model:value.trim="formConfig.opt"
+            mode="multiple"
+            style="width: 100%"
+            :value="value"
+            placeholder="请选择需要的模块(可多选)"
+            :options="options"></a-select>
+        </a-form-item>
+        <template v-if="type==='task'">
+          <a-form-item
+            label="任务名称"
+            name="name"
+            :rules="[{ required: true, message: '请输任务名称!' }]">
+            <a-input v-model:value="formConfig.name" placeholder="任务名称"/>
+          </a-form-item>
+          <a-form-item
+            label="发送的邮箱"
+            name="email"
+            :rules="[{ required: true,type:'email', message: '请输正确邮箱!' }]">
+            <a-auto-complete
+              v-model:value="formConfig.email"
+              style="width: 200px"
+              placeholder="请输入要发送的邮箱"
+              :options="emailOption"
+              @search="handleSearch"
+            >
+              <template #option="{ value: val }">
+                {{ val.split('@')[0] }} @
+                <span style="font-weight: bold">{{ val.split('@')[1] }}</span>
+              </template>
+            </a-auto-complete>
+          </a-form-item>
+          <a-form-item label="执行时间"
+                       name="time"
+                       :rules="[{ required: true,message: '请选择执行时间' }, ]">
+            <time-picker v-model="formConfig.time"/>
+          </a-form-item>
+        </template>
+        <a-form-item>
+          <el-row>
+            是否前后端分离
+            <a-switch size="small" v-model:checked="formConfig.mode"/>
+          </el-row>
+          <el-row class="float-right">
+            实时数据
+            <a-switch size="small" v-model:checked="formConfig.static"/>
+          </el-row>
+        </a-form-item>
+        <a-form-item>
+          <a-button :loading="loading" :disabled="loading" type="primary" class="float-right" html-type="submit">
+            确认
+          </a-button>
+        </a-form-item>
+      </a-form>
+    </el-row>
+    <el-row>
+      <template v-if="type==='spider'">
+        <Edit/>
       </template>
-      <a-form-item>
-        <el-row>
-          是否前后端分离
-          <a-switch size="small" v-model:checked="formConfig.mode"/>
-        </el-row>
-        <el-row class="float-right">
-          实时数据
-          <a-switch size="small" v-model:checked="formConfig.static"/>
-        </el-row>
-      </a-form-item>
-      <a-form-item>
-        <a-button :loading="loading" :disabled="loading" type="primary" class="float-right" html-type="submit">
-          确认
-        </a-button>
-      </a-form-item>
-    </a-form>
-  </el-row>
-  <el-row>
-    <template v-if="type==='spider'">
-      <Edit/>
-    </template>
-  </el-row>
+    </el-row>
+  </div>
 
 </template>
 
@@ -99,7 +98,7 @@ import { computed, defineEmits, reactive, ref, watch } from 'vue'
 import { SpiderConf, Task } from '@/core/spider/type'
 import { spiderDomain } from '@/apis/spider'
 import { message } from 'ant-design-vue'
-import { Time, Timer } from '@/hooks/useTask/type'
+import { Timer } from '@/hooks/useTask/type'
 import { store } from '@/store'
 
 const emailOption = ref<{ value: string }[]>([])
@@ -146,15 +145,15 @@ const formConfig = reactive<SpiderConf>({
   mode: false,
   static: false,
   type: props.type,
-  task: {} as Task,
-  // 无用的参数用来当零时的
 
+  // 无用的参数用来当零时的
   name: '',
   email: '',
   description: '',
   time: ''
 
 })
+
 /**
  * 是否在加载状态
  * */
@@ -174,7 +173,7 @@ const handleSearch = (val: string): void => {
   if (!val || val.indexOf('@') >= 0) {
     res = []
   } else {
-    res = ['gmail.com', '163.com', 'qq.com'].map(domain => ({ value: `${val}@${domain}` }))
+    res = ['qq.com', '163.com', 'gmail.com'].map(domain => ({ value: `${val}@${domain}` }))
   }
   emailOption.value = res
 }
@@ -215,11 +214,14 @@ const SendConfig = (form: SpiderConf) => {
         mode: false,
         static: false,
         type: props.type,
+
         email: '',
         name: '',
-        time: {}
+        time: '',
+        description: ''
       }
     )
+
     // 爬取成功
     emits('spiderSuccess', res.data, status)
 
