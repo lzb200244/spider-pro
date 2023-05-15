@@ -74,7 +74,6 @@ class UserPeriodicTask(BaseModel):
         super(UserPeriodicTask, self).delete(*args, **kwargs)
         try:
             PeriodicTask.objects.get(pk=self.task.pk).delete()
-            print('ll')
+
         except PeriodicTask.DoesNotExist as e:
             print(e)
-            pass

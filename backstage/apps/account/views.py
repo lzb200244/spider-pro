@@ -1,74 +1,29 @@
 from django.contrib.auth import authenticate
-from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModelMixin
 from rest_framework.views import APIView
 from apps.account.models import UserInfo, UserPeriodicTask
 from apps.account.serializer import AccountSerializers, UserTaskListSerializers
-from enums.response import StatusResponseEnum, CodeResponseEnum
+from enums.response import CodeResponseEnum
 from extensions.auth.jwtauthentication import JWTNotAuthenticatedException
+from extensions.exceptions import AuthenticationFailed
 from extensions.permissions.IsAuthenticated import CustomIsAuthenticated
 from utils.decorates.exception import handle_exceptions
 from utils.pagination.TasksCursorPagination import TasksCursorPagination
 from utils.response.response import APIResponse
+from rest_framework import exceptions
 
 
 # 获取单例日志对象
-
-class LoginAPIView(APIView):
-    @handle_exceptions(log_name='account')
-    def post(self, request, *args, **kwargs):
-        """
-        用户登录
-         username:账号
-         password:密码
-        """
-        user = authenticate(**request.data)
-        if user is None:
-            return APIResponse(code=CodeResponseEnum.Forbidden, msg='用户名或密码错误',
-                               status=StatusResponseEnum.Unauthorized)
-        # 存在
-        # 传入user对象
-        # 生成jwt
-        token = user.get_token()
-        return APIResponse(data={'username': user.username, 'token': token})
 
 
 class RegisterAPIView(CreateModelMixin, GenericAPIView):
     queryset = UserInfo.objects.all()
     serializer_class = AccountSerializers
 
-    def handle_exception(self, exc):
-        # ValidationError 的异常进行自定义
-        if isinstance(exc, serializers.ValidationError):
-            error_dict = exc.detail
-            error_messages = None
-            for field_name, field_errors in error_dict.items():
-                for field_error in field_errors:
-                    error_messages = field_error
-                    break
-            return APIResponse(msg=error_messages, status=StatusResponseEnum.Unauthorized,
-                               code=CodeResponseEnum.Unauthorized)
-
-        return super().handle_exception(exc)
-
     def post(self, request, *args, **kwargs):
         """用户注册"""
         return APIResponse(self.create(request).data)
-        """
-            ser_obj = AccountSerializers(data=request.data)
-    
-            if ser_obj.is_valid():
-                ser_obj.save()
-                return APIResponse(data=ser_obj.data, msg='注册成功')
-    
-            try:
-                msgs = list(ser_obj.errors.values())[0]
-            except (AttributeError, TypeError, KeyError)as e:
-                msgs = ['注册失败']
-    
-            return APIResponse(code=CodeResponseEnum.Unauthorized, msg=msgs[0], status=StatusResponseEnum.Unauthorized)
-        """
 
 
 class AccountView(APIView):
@@ -85,10 +40,25 @@ class AccountView(APIView):
         }
         return APIResponse(data=data)
 
-    def put(self, request, *args, **kwargs):
-        """修改账户"""
-
-        pass
+    @handle_exceptions(log_name='account', pass_error=(AuthenticationFailed,))
+    def post(self, request, *args, **kwargs):
+        """
+        用户登录
+         username:账号
+         password:密码
+        """
+        user = authenticate(**request.data)
+        if user is None:
+            raise AuthenticationFailed(
+                detail={
+                    'code': CodeResponseEnum.Forbidden.value, 'msg': '用户名或密码错误',
+                },
+            )
+        # 存在
+        # 传入user对象
+        # 生成jwt
+        token = user.get_token()
+        return APIResponse(data={'username': user.username, 'token': token})
 
 
 class TasksListView(ListModelMixin, DestroyModelMixin, GenericAPIView, ):
@@ -130,7 +100,10 @@ class TasksListView(ListModelMixin, DestroyModelMixin, GenericAPIView, ):
         try:
             return self.destroy(request)
         except UserPeriodicTask.DoesNotExist:
-            return APIResponse(code=CodeResponseEnum.NotFound, msg='该任务或已经不存在', status=StatusResponseEnum.NotFound)
+            raise exceptions.NotFound(
+                detail={'code': CodeResponseEnum.NotFound, 'msg': '该任务或已经不存在',
+                        }
+            )
 
 
 class TestAPIView(APIView):

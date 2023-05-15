@@ -21,12 +21,14 @@ class JWTNotAuthenticatedException(APIException):
     status_code = status.HTTP_401_UNAUTHORIZED
     default_detail = {
         'code': CodeResponseEnum.Unauthorized,
-        'msg': '未登录'
+        'msg': '未认证'
     }
 
 
 class JWTAuthentication(BaseAuthentication):
-    """jwt认证类"""
+    """
+    jwt认证类
+    """
 
     def authenticate(self, request):
         pat_obj = Pattern()

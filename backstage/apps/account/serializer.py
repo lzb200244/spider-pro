@@ -6,12 +6,11 @@
 ex:账号序列化器
 """
 import copy
-
 from django_celery_beat.models import PeriodicTask
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
 from apps.account.models import UserInfo, UserPeriodicTask
+from enums.response import CodeResponseEnum
 from utils.factory.patternFc import Pattern
 
 
@@ -31,57 +30,40 @@ class AccountSerializers(serializers.ModelSerializer):
         if len(str(value)) < 6 or len(str(value)) > 16:
             raise ValidationError("账号长度需在6-16之间")
         if UserInfo.objects.filter(username=value).exists():
-            raise ValidationError('该账号已存在')
+            raise ValidationError(detail={
+                'msg': '该账号已存在', 'code': CodeResponseEnum.BadRequest
+            })
         return value
 
     def validate_email(self, value):
 
         if UserInfo.objects.filter(email=value).exists():
-            raise ValidationError(detail='邮箱已经存在')
+            raise ValidationError(detail={
+                'msg': '邮箱已经存在', 'code': CodeResponseEnum.BadRequest
+            })
         if not self.pat['email'].match(value):
-            raise ValidationError(detail='邮箱不符合')
+            raise ValidationError(detail={
+                'msg': '邮箱不符合', 'code': CodeResponseEnum.BadRequest
+            })
+
         return value
 
     def validate_password(self, value):
 
         if not self.pat['pwd'].match(value):
-            raise ValidationError(detail='密码必须包含字母且在6-12')
+            raise ValidationError(detail={
+                'msg': '密码必须包含字母且在6-12', 'code': CodeResponseEnum.BadRequest
+            })
 
         return value
 
     def validate(self, attrs):
         if attrs["rePassword"] != attrs["password"]:
-            raise ValidationError(detail='两次密码不一致')
+            raise ValidationError(detail={
+                'msg': '两次密码不一致', 'code': CodeResponseEnum.BadRequest
+            })
 
         return attrs
-
-    """
-    
-        def is_valid(self, *, raise_exception=False):
-            if not hasattr(self, '_validated_data'):
-                try:
-                    self._validated_data = self.run_validation(self.initial_data)
-                except ValidationError as exc:
-    
-                    self._validated_data = {}
-                    self._errors = exc.detail
-                else:
-                    self._errors = {}
-    
-            # todo 对isvalid方法重写自定义返回结果
-            if self._errors and raise_exception:
-                msgs = '注册失败'
-                try:
-                    msgs = list(self.errors.values())[0][0]
-                except (AttributeError, TypeError, KeyError)as e:
-                    raise ValidationError(
-                        detail={
-                            'msg': msgs,
-                            'code': 1201
-                        }
-                    )
-                return not bool(self._errors)
-    """
 
     def save(self, **kwargs):
         data = copy.deepcopy(self.validated_data)
@@ -108,12 +90,3 @@ class UserTaskListSerializers(serializers.ModelSerializer):
     class Meta:
         model = UserPeriodicTask
         fields = ['task']
-
-    # def get_task(self, query):
-    #
-    #     return {
-    #         'id': query.task.pk,
-    #         'name': query.task.name,
-    #         'description': query.task.description,
-    #         'start_time': query.task.start_time,
-    #     }

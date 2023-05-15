@@ -41,7 +41,9 @@ class BaseCrawl(metaclass=ABCMeta):
         # 是否存在redis或者是否需要实时数据
         url = self.params.get('url')
         mode = self.params.get('mode')
+
         if not mode and self.conn.exists(url):
+
             self.response_data = self.conn.get(url)
             # 直接进入响应中间件
             content = self.response_data.decode('UTF-8')

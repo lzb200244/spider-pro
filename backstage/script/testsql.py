@@ -1,3 +1,7 @@
+import logging
+
+from django.template.loader import render_to_string
+
 import __init__script
 from django_celery_beat.models import PeriodicTask
 from apps.account.models import UserPeriodicTask, UserInfo
@@ -27,10 +31,39 @@ only 方法返回的是原始的模型对象，因此你可以对查询结果进
 所以，如果你只需要查询指定的字段，并且需要对查询结果进行保存或更新操作，可以使用 only 方法。
 
 
-
-
-
-
 """
 
 # exists 的sql语句 查询结果过滤然后limit 1
+from django.core.mail import EmailMessage
+from django.conf import settings
+import os
+html_content = render_to_string('email_template.html', {'some_variable': 'some_value'})
+print(html_content)
+email = EmailMessage(
+    'Subject here',
+    html_content,
+    settings.EMAIL_HOST_USER,
+    ['2632141215@qq.com'],
+)
+email.send()
+#
+# with open('test.html', 'rb') as f:
+#     email.attach('img.html', f.read(), 'text/html')  # 添加图片附件
+#
+# email.send()
+
+import io
+
+# 将image_data作为文件流，使用Pillow库打开图片
+# import base64
+#
+# # 读取图片文件
+# with open('img.png', 'rb') as f:
+#     image_data = f.read()
+#
+# # 将图片数据转换为base64编码字符串
+# image_b64 = base64.b64encode(image_data).decode('utf-8')
+
+# 将图片数据嵌入HTML中
+# html = f'<img src="data:image/jpeg;base64,{image_b64}">'
+# print(html)

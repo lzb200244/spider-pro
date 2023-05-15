@@ -1,7 +1,5 @@
 import logging
-
 from celery import shared_task
-
 from core.spider.errors.basics import Error
 from type.spider.main import Params, Task
 from utils.Tencent.sendemial import EMAIL

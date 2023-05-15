@@ -6,7 +6,6 @@ file-name:prod
 ex:线上环境配置
 """
 import datetime
-import os
 
 try:
 
@@ -58,25 +57,19 @@ DRIVER_PATH = './chromedriver'
 # ################################################redis配置
 
 CATCH_LIST = ['default', 'spider', 'account']
-REDIS_CONN = {
-    "host": "127.0.0.1",
-    "port": 16380,
-    "password": 'lzb200244',
-
-}
 
 
 def redis_conf(index):
     return {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_CONN.get('host')}:{REDIS_CONN.get('port')}/{index}",  # 安装redis的主机的 IP 和 端口
+        "LOCATION": f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{index}",  # 安装redis的主机的 IP 和 端口
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 1000,
                 "encoding": 'utf-8'
             },
-            "PASSWORD": REDIS_CONN.get('password')  # redis密码
+            "PASSWORD": os.getenv('REDIS_PASSWORD')  # redis密码
         }
     }
 
@@ -91,36 +84,35 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'spider_pro',
-        'USER': 'root',
-        'PASSWORD': 'lzb200244',
-        'HOST': '127.0.0.1',
-        'PORT': '13307',
+        'USER': os.getenv('MYSQL_ROOT_USER'),
+        'PASSWORD': os.getenv('MYSQL_ROOT_PASSWORD'),
+        'HOST': os.getenv('MYSQL_ROOT_HOST'),
+        'PORT': os.getenv('MYSQL_ROOT_PORT')
     }
 }
+
+# #####################################################QQ邮箱发送配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'  # 腾讯QQ邮箱 SMTP 服务器地址
+EMAIL_PORT = 25  # SMTP服务的端口号
+EMAIL_HOST_USER = '1405839758@qq.com'  # 你的qq邮箱，邮件发送者的邮箱
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # 你申请的授权码
+EMAIL_USE_TLS = False  # 与SMTP服务器通信时,是否启用安全模式
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # 默认发件用户
+
 # ################################################日志配置
 LOG_ROOT = os.path.join(BASE_DIR, 'logs')
+
+TIME_ZONE = 'Asia/Shanghai'
 if not os.path.exists(LOG_ROOT):
     os.mkdir(LOG_ROOT)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-
     'formatters': {
         # 日志格式
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        # 'custom_format': {
-        #     'format': '{asctime} [{levelname}] {module}.{funcName}:{lineno} - {message}',
-        #     'style': '{',
-        # },
         'spider': {
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
             'style': '{',
         },
         "default": {
@@ -130,7 +122,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        # 名字睡意
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',  # StreamHandler处理方式
@@ -186,14 +177,12 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'encoding': 'utf-8',
             'filename': os.path.join(BASE_DIR, 'logs/spider.log'),
-            'formatter': 'default',
+            'formatter': 'spider',
             'backupCount': 3,  # 备份info.log.1 info.log.2 info.log.3 info.log.4
             'maxBytes': 1024 * 1024 * 50,  # 日志大小50m
         },
 
     },
-    # 日志实例对象
-    # 所有的实例对象凡是有日志记录这里都会有一份
     'loggers': {
         '': {
             'handlers': ['waring', 'console', 'error'],
@@ -221,7 +210,5 @@ LOGGING = {
             "handlers": ["server"],
             'propagate': False,
         },
-
     }
-
 }

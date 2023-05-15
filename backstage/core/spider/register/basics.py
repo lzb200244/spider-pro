@@ -203,7 +203,6 @@ class RegisterUserTasks:
                 **task_data
             )
             # 任务与用户关系
-
             if self.params['type'] == TaskTypeEnum.Task.value:
                 UserPeriodicTask.objects.create(
                     task=task,
@@ -220,6 +219,6 @@ class RegisterUserTasks:
                 }
 
         except ValidationError:
+            # 针对默认爬虫任务名称是url可能存在多次爬虫,但是这是默认的无需处理
             if self.params['type'] == TaskTypeEnum.Spider.value:
                 return {}
-            raise Error('任务名称已经存在了')
